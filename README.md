@@ -144,16 +144,16 @@ This project was orchestrated across multiple AI agents. Below is the complete r
 
 | Agent | Model | Provider | Role | Status | Output |
 |-------|-------|----------|------|--------|--------|
-| **Nyx** (this agent) | GLM-5.2 (z-ai) via Nous Portal | Nous | Orchestrator, builder, deployer | ✅ Active | All code, design, deployment, documentation |
+| **Nyx** (this agent) | MiniMax M3 via TokenRouter | Custom URL | Orchestrator, builder, deployer | ✅ Active | All code, design, deployment, documentation |
 | **Ash** (Openclaw) | `openrouter/nvidia/nemotron-3-ultra-550b-a55b:free` | OpenRouter via Openclaw | Content writer | ✅ Success | All website copy (welcome, section reveals, game items, leaf messages, final congratulations) |
-| **MoA** (mixture_of_agents) | Anthropic Claude Opus 4.6 (aggregator) + Claude Opus 4.6, Gemini 2.5 Pro, GPT-5.4 Pro, Deepseek v3.2 (reference) | OpenRouter | Creative direction synthesis | ❌ Failed | OpenRouter credits exhausted (402 error) |
+| **MoA** (mixture_of_agents) | MiniMax M3 (aggregator) + GLM 5.1 + Step 4.7 flash (reference) | NVIDIA NIM | Creative direction synthesis | ❌ Failed | OpenRouter credits exhausted (402 error) |
 | **Opencode CLI** | `opencode/mimo-v2.5-free` | OpenCode (configured) | Code generation | ⚪ Not used | Orchestrator wrote code directly; faster than delegation |
 | **Kilo Code CLI** | Kilo default | Kilo Code | Code review | ⚪ Not used | Pure CSS/vanilla JS; no framework review needed |
 | **Deepseek V4 Pro** | `deepseek-v4-pro` | hyper.charm.land (custom endpoint) | Enhancement ideas | ✅ Success (after API key provided) | 5 enhancement ideas implemented: pollen burst, audio chimes, feisty easter egg, accessibility focus styles, sr-only announcer |
 
 ### Model details
 
-**GLM-5.2 (z-ai) — Nyx (orchestrator)**
+**GLM-5.2 (z-ai) now switched to Minimax M3 — Nyx (orchestrator)**
 - Via Nous Portal
 - Self-identification adjusted from prior `MiniMax-M3` model on switch
 - Sole builder of the HTML/CSS/JS file, deployment, and documentation
