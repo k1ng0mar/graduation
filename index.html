@@ -707,7 +707,7 @@ body {
   function s1Tick() {
     if (!isHolding) return;
     const elapsed = (performance.now() - holdStart) / 1000;
-    const target = holdFromDawn + elapsed * 0.12;
+    const target = holdFromDawn + elapsed * 0.25;
     setDawn(Math.min(target, 1.0));
     if (dawn < 1.0) requestAnimationFrame(s1Tick);
     else { isHolding = false; completeStage1(); }
