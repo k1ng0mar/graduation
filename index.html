@@ -103,12 +103,20 @@ body {
   margin-top: 0.6em; font-size: clamp(1.1rem, 2.5vw, 1.4rem);
 }
 #stage-1 .invitation .line.instruction {
-  font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
   color: var(--c-gold);
   margin-top: 1.8em;
-  opacity: 0.85;
+  opacity: 1;
   letter-spacing: 0.04em;
   font-weight: 300;
+  text-shadow: 0 0 24px rgba(247, 212, 155, 0.7), 0 0 50px rgba(247, 212, 155, 0.35);
+}
+#stage-1 .invitation .line.instruction.show {
+  animation: lineIn 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards, holdPulse 2.2s ease-in-out 1.6s infinite;
+}
+@keyframes holdPulse {
+  0%, 100% { opacity: 1; transform: translateY(0) scale(1); }
+  50% { opacity: 0.75; transform: translateY(2px) scale(1.015); }
 }
 #stage-1 .invitation .deco {
   width: 40px; height: 1px;
@@ -212,8 +220,9 @@ body {
 #stage-3 .stage-prompt.show { animation: blurIn 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 #stage-3 .stage-prompt.fade { animation: blurOut 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 #stage-3 .leaf {
-  position: absolute; width: 36px; height: 36px; cursor: pointer; z-index: 5;
+  position: absolute; width: 48px; height: 48px; cursor: pointer; z-index: 5;
   animation: leafFall linear forwards;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 #stage-3 .leaf.caught { animation: leafCatch 0.6s ease forwards; pointer-events: none; }
 #stage-3 .leaf-msg {
@@ -356,12 +365,12 @@ body {
   <p class="prompt-s1" id="prompt-s1">begin.</p>
 </div>
 
-<!-- STAGE 2: GARDEN — plant 3 roses -->
+<!-- STAGE 2: GARDEN -- click anywhere to grow 5 flowers -->
 <div class="stage" id="stage-2">
   <div class="garden-light"></div>
-  <p class="stage-prompt" id="prompt-s2">plant three.</p>
+  <p class="stage-prompt" id="prompt-s2">tap to grow.</p>
   <div class="garden-ground"></div>
-  <div class="rose-row" id="rose-row"></div>
+  <div class="flower-field" id="flower-field"></div>
 </div>
 
 <!-- STAGE 3: AUTUMN — catch falling leaves -->
@@ -485,16 +494,29 @@ body {
       document.getElementById('invitation').classList.add('show');
       setTimeout(() => document.getElementById('inv-1').classList.add('show'), 600);
       setTimeout(() => document.getElementById('inv-deco').classList.add('show'), 1400);
-      setTimeout(() => document.getElementById('inv-2').classList.add('show'), 2000);
-      setTimeout(() => document.getElementById('inv-3').classList.add('show'), 2800);
-      setTimeout(() => document.getElementById('inv-4').classList.add('show'), 4200);
-      // After the invitation settles, fade it and show "begin."
+      setTimeout(() => document.getElementById('inv-2').classList.add('show'), 2200);
+      setTimeout(() => document.getElementById('inv-3').classList.add('show'), 3200);
+      setTimeout(() => document.getElementById('inv-4').classList.add('show'), 4800);
+      // After the invitation settles, fade top lines and show "begin."
       setTimeout(() => {
-        document.getElementById('invitation').classList.add('fade');
+        // Fade the poetic invitation lines only — instruction stays
+        document.getElementById('inv-1').style.transition = 'opacity 1.5s ease, filter 1.5s ease';
+        document.getElementById('inv-1').style.opacity = '0';
+        document.getElementById('inv-1').style.filter = 'blur(6px)';
+        document.getElementById('inv-deco').style.transition = 'opacity 1.5s ease';
+        document.getElementById('inv-deco').style.opacity = '0';
+        document.getElementById('inv-2').style.transition = 'opacity 1.5s ease';
+        document.getElementById('inv-2').style.opacity = '0';
+        document.getElementById('inv-3').style.transition = 'opacity 1.5s ease, filter 1.5s ease';
+        document.getElementById('inv-3').style.opacity = '0';
+        document.getElementById('inv-3').style.filter = 'blur(6px)';
+        // Keep instruction visible + show prompt
         setTimeout(() => {
-          if (currentStage === 0) showPrompt('prompt-s1');
-        }, 800);
-      }, 5500);
+          if (currentStage === 0) {
+            showPrompt('prompt-s1');
+          }
+        }, 600);
+      }, 7500);
     }, 800);
   }
 
@@ -503,6 +525,9 @@ body {
     isHolding = true;
     holdStart = performance.now();
     holdFromDawn = dawn;
+    // Fade the instruction text gently as user starts holding
+    const inst = document.getElementById('inv-4');
+    if (inst) { inst.style.transition = 'opacity 2s ease'; inst.style.opacity = '0'; }
     s1Tick();
   }
   function s1HoldEnd() { isHolding = false; }
@@ -518,18 +543,93 @@ body {
     if (s1Done) return;
     s1Done = true;
     fadePrompt('prompt-s1');
-    setTimeout(() => goToStage(1), 1800);
+    // Spawn heart particles around the sun
+    startDawnHearts();
+    // Wait 4 seconds for hearts + pause before transitioning
+    setTimeout(() => goToStage(1), 4200);
+  }
+
+  // Heart particles surrounding the sun after dawn
+  function startDawnHearts() {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'dawn-hearts';
+    canvas.style.cssText = 'position:absolute;inset:0;z-index:4;pointer-events:none;';
+    const stage1 = document.getElementById('stage-1');
+    stage1.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+
+    const heartColors = ['#9b2d4e', '#b5546e', '#e08a7d', '#f2b48a', '#f7d49b'];
+    const particles = [];
+    const cx = w / 2, cy = h / 2; // Sun center
+
+    for (let i = 0; i < 60; i++) {
+      const angle = (i / 60) * Math.PI * 2 + Math.random() * 0.5;
+      const dist = 80 + Math.random() * 100;
+      particles.push({
+        x: cx + Math.cos(angle) * dist,
+        y: cy + Math.sin(angle) * dist * 0.6,
+        size: 3 + Math.random() * 5,
+        color: heartColors[i % heartColors.length],
+        alpha: 0.4 + Math.random() * 0.5,
+        speed: 0.3 + Math.random() * 0.4,
+        angle: angle,
+        drift: Math.random() * 0.02 - 0.01,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+
+    let startTime = performance.now();
+    function drawHeart(ctx, x, y, size) {
+      const s = size / 16;
+      ctx.beginPath();
+      for (let t = 0; t < Math.PI * 2; t += 0.05) {
+        const hx = 16 * Math.pow(Math.sin(t), 3);
+        const hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+        if (t === 0) ctx.moveTo(x + hx * s, y + hy * s);
+        else ctx.lineTo(x + hx * s, y + hy * s);
+      }
+      ctx.closePath();
+    }
+
+    function animate(now) {
+      const elapsed = (now - startTime) / 1000;
+      if (elapsed > 4.5) { canvas.remove(); return; } // Clean up after transition
+      ctx.clearRect(0, 0, w, h);
+      const fadeAlpha = elapsed < 3 ? 1 : Math.max(0, 1 - (elapsed - 3) / 1.5);
+      
+      particles.forEach(p => {
+        p.angle += p.drift;
+        const floatX = Math.sin(now / 1000 * p.speed + p.phase) * 8;
+        const floatY = Math.cos(now / 1000 * p.speed + p.phase) * 4;
+        const px = cx + Math.cos(p.angle) * (80 + Math.sin(now / 2000 + p.phase) * 20) + floatX;
+        const py = cy + Math.sin(p.angle) * (50 + Math.cos(now / 2000 + p.phase) * 15) * 0.6 + floatY;
+        
+        ctx.globalAlpha = p.alpha * fadeAlpha;
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = p.color;
+        drawHeart(ctx, px, py, p.size);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+      requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
   }
 
   // ============ STAGE 2: GARDEN — plant 3 roses ============
   let s2Planted = 0;
-  const s2Total = 3;
+  const s2Total = 5;
   let s2Done = false;
 
   function buildRoseSVG() {
     return '<svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">' +
       // Bud (initially visible)
-      '<g class="rose-bud">' +
+      '<g class="flower-bud">' +
         '<path d="M50 200 L50 100" stroke="#6e7d54" stroke-width="3" fill="none"/>' +
         '<ellipse cx="38" cy="130" rx="8" ry="5" fill="#6e7d54" transform="rotate(-30 38 130)"/>' +
         '<ellipse cx="62" cy="145" rx="8" ry="5" fill="#7a8b5e" transform="rotate(30 62 145)"/>' +
@@ -537,7 +637,7 @@ body {
         '<path d="M50 60 Q42 70 50 80 Q58 70 50 60" fill="#b5546e"/>' +
       '</g>' +
       // Blooms (initially hidden, grow when planted)
-      '<g class="rose-blooms">' +
+      '<g class="flower-blooms">' +
         '<path d="M50 200 L50 110" stroke="#6e7d54" stroke-width="2.5" fill="none"/>' +
         '<ellipse cx="36" cy="140" rx="8" ry="4" fill="#6e7d54" transform="rotate(-30 36 140)"/>' +
         '<ellipse cx="64" cy="155" rx="8" ry="4" fill="#7a8b5e" transform="rotate(30 64 155)"/>' +
@@ -551,26 +651,28 @@ body {
   }
 
   function initStage2() {
-    const row = document.getElementById('rose-row');
-    for (let i = 0; i < s2Total; i++) {
-      const slot = document.createElement('div');
-      slot.className = 'rose-slot';
-      slot.innerHTML = buildRoseSVG() + '<span class="rose-hint">plant</span>';
-      slot.addEventListener('click', function() { plantRose(slot); });
-      row.appendChild(slot);
-    }
+    const field = document.getElementById('flower-field');
+    field.addEventListener('click', function(e) {
+      if (s2Done) return;
+      // Don't plant on the prompt itself
+      if (e.target.closest('.stage-prompt')) return;
+      
+      const flower = document.createElement('div');
+      flower.className = 'planted-flower';
+      flower.style.left = e.clientX + 'px';
+      flower.style.bottom = '0px';
+      flower.innerHTML = buildRoseSVG();
+      field.appendChild(flower);
+      s2Planted++;
+      
+      if (s2Planted >= s2Total && !s2Done) {
+        s2Done = true;
+        // Let last flower bloom before transitioning
+        setTimeout(() => fadePrompt('prompt-s2'), 800);
+        setTimeout(() => goToStage(2), 2500);
+      }
+    });
     setTimeout(() => { if (currentStage === 1) showPrompt('prompt-s2'); }, 1200);
-  }
-
-  function plantRose(slot) {
-    if (slot.classList.contains('planted')) return;
-    slot.classList.add('planted');
-    s2Planted++;
-    if (s2Planted >= s2Total && !s2Done) {
-      s2Done = true;
-      fadePrompt('prompt-s2');
-      setTimeout(() => goToStage(2), 2500);
-    }
   }
 
   // ============ STAGE 3: AUTUMN — catch leaves ============
@@ -585,13 +687,13 @@ body {
     'Every ending is a threshold. Step through.',
     'You were made for more than surviving. You were made for blooming.'
   ];
-  const s3Colors = ['#c4651a', '#a85a25', '#b85520', '#d4742a', '#8a4525', '#cc7028'];
+  const s3Colors = ['#ff4d00', '#ff8c00', '#ffcc00', '#c70039', '#ff6b35', '#7ac74f'];
 
   function s3LeafSVG(color) {
-    return '<svg viewBox="0 0 36 36">' +
-      '<path d="M18 4 Q28 8 30 18 Q28 28 18 32 Q8 28 6 18 Q8 8 18 4 Z" fill="' + color + '" opacity="0.9"/>' +
-      '<path d="M18 6 L18 30" stroke="rgba(0,0,0,0.2)" stroke-width="1" fill="none"/>' +
-      '<path d="M18 12 L12 8 M18 12 L24 8 M18 20 L10 16 M18 20 L26 16" stroke="rgba(0,0,0,0.15)" stroke-width="0.5" fill="none"/>' +
+    return '<svg viewBox="0 0 48 48">' +
+      '<path d="M24 6 Q36 11 39 24 Q36 37 24 42 Q12 37 9 24 Q12 11 24 6 Z" fill="' + color + '" opacity="0.95" stroke="rgba(60,20,20,0.6)" stroke-width="0.8"/>' +
+      '<path d="M24 9 L24 39" stroke="rgba(60,20,20,0.5)" stroke-width="1.2" fill="none"/>' +
+      '<path d="M24 16 L15 11 M24 16 L33 11 M24 26 L13 22 M24 26 L35 22" stroke="rgba(60,20,20,0.35)" stroke-width="0.6" fill="none"/>' +
       '</svg>';
   }
 
@@ -628,15 +730,15 @@ body {
 
   function initStage3() {
     showPrompt('prompt-s3');
-    // First leaf drops in quickly so user sees something
-    setTimeout(s3SpawnLeaf, 700);
+    // First leaf drops in immediately so user sees something falling
+    setTimeout(s3SpawnLeaf, 400);
     // Then steady stream
     function tick() {
       if (s3Done || currentStage !== 2) return;
       if (s3Caught < s3Total) s3SpawnLeaf();
-      setTimeout(tick, 1500);
+      setTimeout(tick, 1300);
     }
-    setTimeout(tick, 2200);
+    setTimeout(tick, 1800);
   }
 
   // ============ STAGE 4: MONACO — light the harbor ============
