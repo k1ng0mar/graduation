@@ -663,25 +663,24 @@ body {
     // Panther constellation loaded via <object> tag from panther.svg
     // No manual SVG generation needed — the file has its own stars, lines, and animations
     // Page load choreography: invitation lines blur in one at a time
-    // Night sky settles → stars → invitation begins
+    // Night sky settles → stars → invitation begins (compressed for discoverability)
     setTimeout(() => {
       document.getElementById('invitation').classList.add('show');
-      setTimeout(() => document.getElementById('inv-1').classList.add('show'), 600);
-      setTimeout(() => document.getElementById('inv-deco').classList.add('show'), 1400);
-      setTimeout(() => document.getElementById('inv-2').classList.add('show'), 2200);
-      setTimeout(() => document.getElementById('inv-3').classList.add('show'), 3200);
-      setTimeout(() => document.getElementById('inv-4').classList.add('show'), 4800);
+      setTimeout(() => document.getElementById('inv-1').classList.add('show'), 300);
+      setTimeout(() => document.getElementById('inv-deco').classList.add('show'), 700);
+      setTimeout(() => document.getElementById('inv-2').classList.add('show'), 1100);
+      setTimeout(() => document.getElementById('inv-3').classList.add('show'), 1700);
+      setTimeout(() => document.getElementById('inv-4').classList.add('show'), 2300);
       // After the invitation settles, fade top lines and show "begin."
       setTimeout(() => {
-        // Fade the poetic invitation lines only — instruction stays
-        document.getElementById('inv-1').style.transition = 'opacity 1.5s ease, filter 1.5s ease';
+        document.getElementById('inv-1').style.transition = 'opacity 1s ease, filter 1s ease';
         document.getElementById('inv-1').style.opacity = '0';
         document.getElementById('inv-1').style.filter = 'blur(6px)';
-        document.getElementById('inv-deco').style.transition = 'opacity 1.5s ease';
+        document.getElementById('inv-deco').style.transition = 'opacity 1s ease';
         document.getElementById('inv-deco').style.opacity = '0';
-        document.getElementById('inv-2').style.transition = 'opacity 1.5s ease';
+        document.getElementById('inv-2').style.transition = 'opacity 1s ease';
         document.getElementById('inv-2').style.opacity = '0';
-        document.getElementById('inv-3').style.transition = 'opacity 1.5s ease, filter 1.5s ease';
+        document.getElementById('inv-3').style.transition = 'opacity 1s ease, filter 1s ease';
         document.getElementById('inv-3').style.opacity = '0';
         document.getElementById('inv-3').style.filter = 'blur(6px)';
         // Keep instruction visible + show prompt
@@ -689,9 +688,9 @@ body {
           if (currentStage === 0) {
             showPrompt('prompt-s1');
           }
-        }, 600);
-      }, 7500);
-    }, 800);
+        }, 400);
+      }, 3500);
+    }, 500);
   }
 
   function s1HoldStart() {
