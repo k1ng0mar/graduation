@@ -63,6 +63,7 @@ body {
 #stage-1 .constellation { position: absolute; inset: 0; opacity: calc((1 - var(--dawn)) * 0.6); }
 #stage-1 .constellation svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 #stage-1 .constellation .pt { fill: var(--warm-white); }
+#stage-1 .constellation .pt.spine { fill: var(--c-gold); opacity: 0.8; }
 #stage-1 .constellation .ln { stroke: var(--warm-white); stroke-width: 0.4; fill: none; opacity: 0.3; }
 #stage-1 .sun {
   position: absolute; left: 50%; top: 50%;
@@ -222,6 +223,30 @@ body {
 #stage-3 {
   background: linear-gradient(180deg, #1a1f2e 0%, #3d2a3e 30%, #5a3a2a 70%, #4a2a1a 100%);
 }
+#stage-3 .autumn-sun {
+  position: absolute;
+  left: 10%;
+  top: 25%;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 230, 160, 0.9) 0%, rgba(232, 194, 133, 0.5) 40%, transparent 70%);
+  filter: blur(4px);
+  box-shadow: 0 0 60px rgba(232, 194, 133, 0.4);
+  z-index: 1;
+}
+#stage-3 .autumn-tree {
+  position: absolute;
+  right: -15%;
+  bottom: 0;
+  width: 60%;
+  height: 80%;
+  z-index: 2;
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 600' preserveAspectRatio='xMidYMax meet'%3E%3C!-- trunk --%3E%3Cpath d='M280 600 L285 400 Q283 350 290 300 Q295 250 288 200 L285 120' stroke='%233d2a1a' stroke-width='14' fill='none' stroke-linecap='round'/%3E%3C!-- main branches --%3E%3Cpath d='M285 280 Q250 260 210 250 Q180 245 150 240' stroke='%233d2a1a' stroke-width='8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M287 220 Q320 200 350 190 Q380 185 395 185' stroke='%233d2a1a' stroke-width='7' fill='none' stroke-linecap='round'/%3E%3Cpath d='M286 160 Q260 140 230 130 Q200 125 175 125' stroke='%233d2a1a' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3Cpath d='M285 120 Q300 100 320 90 Q340 85 355 85' stroke='%233d2a1a' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C!-- sub-branches --%3E%3Cpath d='M210 250 Q190 235 170 230' stroke='%233d2a1a' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M150 240 Q130 230 110 235' stroke='%233d2a1a' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M350 190 Q370 175 385 170' stroke='%233d2a1a' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M230 130 Q210 115 195 110' stroke='%233d2a1a' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Cpath d='M175 125 Q155 115 140 118' stroke='%233d2a1a' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C!-- foliage clusters (sparse, autumn) --%3E%3Cellipse cx='160' cy='235' rx='35' ry='28' fill='%23b85a20' opacity='0.6'/%3E%3Cellipse cx='110' cy='232' rx='30' ry='24' fill='%23d4742a' opacity='0.5'/%3E%3Cellipse cx='200' cy='245' rx='28' ry='22' fill='%23c4651a' opacity='0.5'/%3E%3Cellipse cx='370' cy='185' rx='30' ry='25' fill='%23b85a20' opacity='0.5'/%3E%3Cellipse cx='390' cy='175' rx='25' ry='20' fill='%23d4742a' opacity='0.4'/%3E%3Cellipse cx='210' cy='125' rx='28' ry='22' fill='%23c4651a' opacity='0.5'/%3E%3Cellipse cx='145' cy='120' rx='25' ry='20' fill='%23b85a20' opacity='0.4'/%3E%3Cellipse cx='330' cy='88' rx='25' ry='20' fill='%23d4742a' opacity='0.5'/%3E%3Cellipse cx='355' cy='82' rx='22' ry='18' fill='%23c4651a' opacity='0.4'/%3E%3Cellipse cx='275' cy='100' rx='30' ry='25' fill='%23b85a20' opacity='0.45'/%3E%3C/svg%3E") no-repeat bottom right;
+  background-size: contain;
+  opacity: 0.85;
+}
 #stage-3 .stage-prompt {
   position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
   font-family: 'Fraunces', serif; font-style: italic; font-weight: 300;
@@ -272,67 +297,139 @@ body {
 #stage-4 .light-target.lit { fill: rgba(255, 220, 140, 0.85); }
 #stage-4 .light-target.lit::before { content: ''; }
 
-/* ============ STAGE 5: REVEAL (typewriter message) ============ */
+/* ============ STAGE 5: REVEAL (record player → desktop → typewriter) ============ */
 #stage-5 {
-  background: linear-gradient(180deg, #1a1f2e 0%, #232a3a 30%, #2d3548 60%, #3a4258 100%);
+  background: linear-gradient(180deg, #0a0f1c 0%, #131c2e 50%, #1a1f2e 100%);
 }
-#stage-5 .sun-high {
-  position: absolute; top: 15%; left: 50%; transform: translateX(-50%);
-  width: 140px; height: 140px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,245,210,0.5) 0%, rgba(232,194,133,0.25) 50%, transparent 80%);
-  filter: blur(6px);
-  box-shadow: 0 0 80px rgba(232,194,133,0.3);
+
+/* --- Record Player --- */
+#stage-5 .record-player-wrap {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; z-index: 10;
+  transition: opacity 1.5s ease;
 }
-#stage-5 .message-wrap {
-  position: relative; z-index: 5; max-width: min(42ch, 90vw);
-  text-align: left; padding: 2rem;
+#stage-5 .record-player-wrap.hide { opacity: 0; pointer-events: none; }
+#stage-5 .record-player {
+  width: min(340px, 72vw); height: auto; cursor: pointer;
+  filter: drop-shadow(0 8px 30px rgba(232, 194, 133, 0.15));
+  transition: transform 0.3s ease;
+}
+#stage-5 .record-player:hover { transform: scale(1.02); }
+#stage-5 .rp-hint {
+  margin-top: 2rem; font-family: 'Fraunces', serif; font-style: italic;
+  font-size: clamp(0.9rem, 1.8vw, 1.1rem); color: var(--c-gold);
+  opacity: 0; transition: opacity 1s ease;
+  text-shadow: 0 0 16px rgba(232, 194, 133, 0.5);
+}
+#stage-5 .rp-hint.show { opacity: 0.85; }
+@keyframes vinylSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+#stage-5 .vinyl-disc.spinning { animation: vinylSpin 2.5s linear infinite; transform-origin: center; }
+#stage-5 .tonearm { transform-origin: 82% 18%; transition: transform 1.4s cubic-bezier(0.4, 0, 0.2, 1); }
+#stage-5 .tonearm.dropped { transform: rotate(-22deg); }
+
+/* --- Press Start Overlay --- */
+#stage-5 .press-start {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; z-index: 15;
+  opacity: 0; pointer-events: none; transition: opacity 1s ease;
+}
+#stage-5 .press-start.show { opacity: 1; pointer-events: auto; cursor: pointer; }
+#stage-5 .press-start-text {
+  font-family: 'Fraunces', serif; font-style: italic;
+  font-size: clamp(1.2rem, 3vw, 1.8rem); color: var(--c-gold);
+  text-shadow: 0 0 30px rgba(232, 194, 133, 0.6); letter-spacing: 0.05em;
+}
+#stage-5 .chevron-pulse {
+  margin-top: 1.5rem; font-size: 1.5rem; color: var(--c-gold);
+  animation: chevronPulse 1.8s ease-in-out infinite;
+}
+@keyframes chevronPulse {
+  0%, 100% { opacity: 0.4; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(6px); }
+}
+
+/* --- CRT Desktop --- */
+#stage-5 .desktop-wrap {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  z-index: 12; opacity: 0; pointer-events: none; transition: opacity 1.5s ease;
+}
+#stage-5 .desktop-wrap.show { opacity: 1; pointer-events: auto; }
+#stage-5 .crt-monitor {
+  width: min(620px, 92vw); position: relative;
+  filter: drop-shadow(0 8px 40px rgba(0, 0, 0, 0.5));
+}
+#stage-5 .crt-bezel {
+  background: linear-gradient(180deg, #2a2a35 0%, #1e1e28 100%);
+  border-radius: 16px 16px 8px 8px; padding: 28px 28px 20px;
+  border: 2px solid #3a3a48;
+}
+#stage-5 .crt-screen {
+  position: relative; background: #0a0f1c; border-radius: 8px;
+  overflow: hidden; min-height: 320px; max-height: 60vh;
+  border: 1px solid #2a2a35;
+}
+#stage-5 .scanlines {
+  position: absolute; inset: 0; pointer-events: none; z-index: 10;
+  background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 3px);
+}
+#stage-5 .crt-screen::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 11;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%);
+}
+#stage-5 .scramble-text {
+  font-family: 'Courier New', monospace; font-size: 0.85rem; color: var(--c-gold);
+  white-space: pre-wrap; word-break: break-all; padding: 1.2rem;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+#stage-5 .scramble-text.show { opacity: 1; }
+#stage-5 .desktop-content {
+  display: none; padding: 1.5rem 2rem; max-width: 42ch; margin: 0 auto;
+}
+#stage-5 .desktop-content.show { display: block; }
+#stage-5 .crt-base {
+  background: linear-gradient(180deg, #1e1e28 0%, #2a2a35 100%);
+  border-radius: 0 0 12px 12px; padding: 8px 20px 16px;
+  display: flex; justify-content: center; align-items: center; gap: 8px;
+  border: 2px solid #3a3a48; border-top: none;
+}
+#stage-5 .crt-power {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--c-gold); box-shadow: 0 0 8px rgba(232, 194, 133, 0.6);
 }
 #stage-5 .message-p {
   font-family: 'Inter', sans-serif; font-weight: 300;
-  font-size: clamp(0.95rem, 1.8vw, 1.05rem);
-  line-height: 1.8; color: var(--warm-white);
-  margin-bottom: 1.4rem;
-  min-height: 1.8em;
+  font-size: clamp(0.9rem, 1.6vw, 1rem); line-height: 1.8;
+  color: var(--warm-white); margin-bottom: 1.4rem; min-height: 1.8em;
   text-shadow: 0 0 20px rgba(5, 8, 16, 0.6);
 }
-#stage-5 .message-p.typing { color: var(--warm-white); }
 #stage-5 .cursor {
-  display: inline-block; width: 1px; height: 1em;
+  display: inline-block; width: 1.5px; height: 1em;
   background: var(--c-gold); margin-left: 2px;
-  animation: blink 0.8s steps(2) infinite;
-  vertical-align: text-bottom;
+  animation: blink 0.8s steps(2) infinite; vertical-align: text-bottom;
 }
-@keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 #stage-5 .continue-hint {
-  position: relative; margin-top: 2rem;
-  font-family: 'Fraunces', serif; font-style: italic;
-  font-size: 0.9rem; color: var(--c-gold);
-  opacity: 0; transition: opacity 0.6s ease;
-  text-align: center; cursor: pointer;
+  position: relative; margin-top: 1.5rem; font-family: 'Fraunces', serif; font-style: italic;
+  font-size: 0.85rem; color: var(--c-gold); opacity: 0;
+  transition: opacity 0.6s ease; text-align: center; cursor: pointer;
   text-shadow: 0 0 16px rgba(232, 194, 133, 0.5);
 }
 #stage-5 .continue-hint.show { opacity: 0.85; }
 #stage-5 .continue-hint.show:hover { opacity: 1; }
 #stage-5 .signature {
   font-family: 'Fraunces', serif; font-style: italic;
-  font-size: clamp(1.3rem, 2.5vw, 1.6rem);
-  color: var(--c-gold);
-  margin-top: 3rem; text-align: center;
-  opacity: 0; filter: blur(8px);
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem); color: var(--c-gold);
+  margin-top: 2rem; text-align: center; opacity: 0; filter: blur(8px);
   transition: filter 1.2s ease, opacity 1.2s ease 0.3s;
   text-shadow: 0 0 24px rgba(232, 194, 133, 0.5);
 }
 #stage-5 .signature.show { opacity: 1; filter: blur(0); }
-
-/* ============ HEART CANVAS ============ */
 #stage-5 .hearts-canvas {
-  position: absolute; inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 2.5s ease 0.5s;
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  opacity: 0; transition: opacity 2.5s ease 0.5s;
 }
-#stage-5 .hearts-canvas.show { opacity: 1; }
+#stage-5 .hearts-canvas.show { opacity: 0.5; }
+@keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 
 /* ============ KEYFRAMES ============ */
 @keyframes blurIn {
@@ -395,6 +492,8 @@ body {
 
 <!-- STAGE 3: AUTUMN — catch falling leaves -->
 <div class="stage" id="stage-3">
+  <div class="autumn-sun"></div>
+  <div class="autumn-tree"></div>
   <p class="stage-prompt" id="prompt-s3">catch what falls.</p>
   <div class="leaf-msg" id="leaf-msg"></div>
 </div>
@@ -405,13 +504,97 @@ body {
   <div class="harbor" id="harbor"></div>
 </div>
 
-<!-- STAGE 5: REVEAL — typewriter message, click to continue -->
+<!-- STAGE 5: REVEAL — record player → desktop → typewriter -->
 <div class="stage" id="stage-5">
-  <div class="sun-high"></div>
   <canvas class="hearts-canvas" id="hearts-canvas"></canvas>
-  <div class="message-wrap" id="message-wrap"></div>
-  <div class="continue-hint" id="continue-hint">continue</div>
-  <p class="signature" id="signature">— with love, Umar</p>
+  
+  <!-- Phase 1: Record Player -->
+  <div class="record-player-wrap" id="record-player-wrap">
+    <svg class="record-player" id="record-player" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- Clamshell lid (open, angled up) -->
+      <path d="M40 50 Q150 20 260 50 L255 15 Q150 -10 45 15 Z" fill="rgba(26,31,46,0.9)" stroke="#e8c285" stroke-width="1.5"/>
+      <!-- Lid hinge -->
+      <line x1="45" y1="15" x2="45" y2="50" stroke="#e8c285" stroke-width="1.5"/>
+      <line x1="255" y1="15" x2="255" y2="50" stroke="#e8c285" stroke-width="1.5"/>
+      <!-- Latch -->
+      <rect x="145" y="45" width="10" height="6" rx="1" fill="#e8c285" opacity="0.6"/>
+      
+      <!-- Base/Body -->
+      <rect x="30" y="50" width="240" height="170" rx="12" fill="rgba(19,28,46,0.95)" stroke="#e8c285" stroke-width="1.5"/>
+      
+      <!-- Vinyl disc -->
+      <g class="vinyl-disc-group" id="vinyl-disc-group">
+        <circle cx="150" cy="130" r="70" fill="#0a0f1c" stroke="#2a2a35" stroke-width="1"/>
+        <!-- Grooves -->
+        <circle cx="150" cy="130" r="60" fill="none" stroke="rgba(232,194,133,0.08)" stroke-width="0.5"/>
+        <circle cx="150" cy="130" r="50" fill="none" stroke="rgba(232,194,133,0.08)" stroke-width="0.5"/>
+        <circle cx="150" cy="130" r="40" fill="none" stroke="rgba(232,194,133,0.08)" stroke-width="0.5"/>
+        <circle cx="150" cy="130" r="30" fill="none" stroke="rgba(232,194,133,0.08)" stroke-width="0.5"/>
+        <!-- Center label -->
+        <circle cx="150" cy="130" r="20" fill="#1a1f2e" stroke="#e8c285" stroke-width="1"/>
+        <circle cx="150" cy="130" r="3" fill="#e8c285"/>
+        <!-- Label text -->
+        <text x="150" y="125" text-anchor="middle" fill="#e8c285" font-size="6" font-family="Fraunces, serif" font-style="italic" opacity="0.7">For Sev</text>
+        <text x="150" y="138" text-anchor="middle" fill="#e8c285" font-size="4" font-family="Inter, sans-serif" opacity="0.5">side a</text>
+      </g>
+      
+      <!-- Tonearm -->
+      <g class="tonearm" id="tonearm">
+        <!-- Pivot -->
+        <circle cx="245" cy="65" r="8" fill="#2a2a35" stroke="#e8c285" stroke-width="1.5"/>
+        <circle cx="245" cy="65" r="3" fill="#e8c285"/>
+        <!-- Arm -->
+        <line x1="245" y1="65" x2="185" y2="120" stroke="#e8c285" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Cartridge head -->
+        <rect x="178" y="115" width="14" height="10" rx="2" fill="#e8c285" opacity="0.8"/>
+      </g>
+      
+      <!-- Control buttons -->
+      <rect x="55" y="195" width="24" height="16" rx="3" fill="rgba(232,194,133,0.1)" stroke="#e8c285" stroke-width="0.8"/>
+      <rect x="60" y="199" width="6" height="8" fill="#e8c285" opacity="0.5"/>
+      <rect x="90" y="195" width="24" height="16" rx="3" fill="rgba(232,194,133,0.1)" stroke="#e8c285" stroke-width="0.8"/>
+      <path d="M96 199 L96 207 L104 203 Z" fill="#e8c285" opacity="0.6"/>
+      <!-- Digital display -->
+      <rect x="125" y="195" width="50" height="16" rx="2" fill="#0a0f1c" stroke="#e8c285" stroke-width="0.8"/>
+      <text x="150" y="206" text-anchor="middle" fill="#e8c285" font-size="7" font-family="Courier New, monospace" opacity="0.7">00:00</text>
+      <!-- FF buttons -->
+      <rect x="185" y="195" width="24" height="16" rx="3" fill="rgba(232,194,133,0.1)" stroke="#e8c285" stroke-width="0.8"/>
+      <path d="M191 199 L197 203 L191 207 M197 199 L203 203 L197 207" stroke="#e8c285" stroke-width="0.8" fill="none" opacity="0.5"/>
+      <rect x="220" y="195" width="24" height="16" rx="3" fill="rgba(232,194,133,0.1)" stroke="#e8c285" stroke-width="0.8"/>
+      <path d="M226 199 L232 203 L226 207 M232 199 L238 203 L232 207" stroke="#e8c285" stroke-width="0.8" fill="none" opacity="0.5"/>
+      
+      <!-- Feet -->
+      <rect x="50" y="220" width="10" height="6" rx="2" fill="#2a2a35"/>
+      <rect x="240" y="220" width="10" height="6" rx="2" fill="#2a2a35"/>
+    </svg>
+    <p class="rp-hint" id="rp-hint">click to play.</p>
+  </div>
+  
+  <!-- Phase 2: Press Start -->
+  <div class="press-start" id="press-start">
+    <p class="press-start-text">scroll down</p>
+    <div class="chevron-pulse">▼</div>
+  </div>
+  
+  <!-- Phase 3: CRT Desktop -->
+  <div class="desktop-wrap" id="desktop-wrap">
+    <div class="crt-monitor">
+      <div class="crt-bezel">
+        <div class="crt-screen" id="crt-screen">
+          <div class="scanlines"></div>
+          <div class="scramble-text" id="scramble-text"></div>
+          <div class="desktop-content" id="desktop-content">
+            <div class="message-wrap" id="message-wrap"></div>
+            <div class="continue-hint" id="continue-hint">tap to continue</div>
+          </div>
+          <p class="signature" id="signature">— with love, Umar</p>
+        </div>
+      </div>
+      <div class="crt-base">
+        <div class="crt-power"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="announcer" aria-live="polite" class="sr-only"></div>
@@ -489,40 +672,59 @@ body {
       s.style.opacity = 0.25 + Math.random() * 0.7;
       container.appendChild(s);
     }
-    // Jaguar constellation (side view, walking left)
+    // Jaguar constellation — stalking pose, facing left (like reference)
     const c = document.getElementById('constellation-s1');
     const pts = [
-      // Head (left side, front of body)
-      { x: 10, y: 38 }, // 0: nose
-      { x: 14, y: 24 }, // 1: ear front
-      { x: 19, y: 23 }, // 2: ear back
-      { x: 23, y: 28 }, // 3: forehead
-      { x: 30, y: 34 }, // 4: back of head / neck
-      // Body
-      { x: 38, y: 36 }, // 5: shoulder
-      { x: 52, y: 35 }, // 6: mid back
-      { x: 66, y: 36 }, // 7: hip
-      // Tail (curving up and back)
-      { x: 72, y: 32 }, // 8: tail base
-      { x: 80, y: 24 }, // 9: tail mid
-      { x: 87, y: 17 }, // 10: tail tip
-      // Legs
-      { x: 40, y: 50 }, // 11: front shoulder
-      { x: 40, y: 64 }, // 12: front paw
-      { x: 64, y: 50 }, // 13: back hip
-      { x: 64, y: 64 }  // 14: back paw
+      // Head (facing left)
+      { x: 6, y: 40 },   // 0: nose tip
+      { x: 10, y: 35 },  // 1: brow ridge
+      { x: 13, y: 27 },  // 2: ear front
+      { x: 17, y: 23 },  // 3: ear tip
+      { x: 21, y: 28 },  // 4: ear back
+      { x: 24, y: 30 },  // 5: crown
+      { x: 28, y: 32 },  // 6: neck crest
+      // Back (slightly arched)
+      { x: 34, y: 33 },  // 7: withers
+      { x: 45, y: 34 },  // 8: back mid
+      { x: 57, y: 35 },  // 9: back hip
+      // Hindquarters (crouched)
+      { x: 65, y: 33 },  // 10: haunch top
+      { x: 71, y: 38 },  // 11: haunch curve
+      // Tail (curving down and back)
+      { x: 73, y: 37 },  // 12: tail base
+      { x: 80, y: 43 },  // 13: tail mid
+      { x: 85, y: 51 },  // 14: tail low
+      { x: 82, y: 59 },  // 15: tail tip
+      // Back leg (crouched)
+      { x: 69, y: 48 },  // 16: back knee
+      { x: 67, y: 56 },  // 17: back ankle
+      { x: 63, y: 62 },  // 18: back paw
+      // Belly
+      { x: 54, y: 50 },  // 19: belly back
+      { x: 41, y: 50 },  // 20: belly mid
+      { x: 31, y: 48 },  // 21: belly front
+      // Front leg (extended forward)
+      { x: 29, y: 54 },  // 22: front knee
+      { x: 27, y: 60 },  // 23: front ankle
+      { x: 23, y: 64 },  // 24: front paw
+      // Chest and jaw
+      { x: 21, y: 46 },  // 25: chest
+      { x: 17, y: 44 },  // 26: jaw
+      { x: 11, y: 45 }   // 27: chin
     ];
     const eyes = [
-      { x: 18, y: 32 }, // eye 1
-      { x: 24, y: 32 }  // eye 2
+      { x: 12, y: 36 }, // eye 1 (front)
+      { x: 17, y: 35 }  // eye 2 (back)
     ];
-    // Lines define the jaguar silhouette
+    // Lines tracing the stalking jaguar silhouette
     const lines = [
-      [0, 1], [1, 2], [2, 3], [3, 4], [4, 0], // head outline
-      [4, 5], [5, 6], [6, 7],                  // back
-      [7, 8], [8, 9], [9, 10],                 // tail
-      [5, 11], [11, 12],                        // front leg
-      [7, 13], [13, 14]                         // back leg
+      [0,1],[1,2],[2,3],[3,4],[4,5],[5,6],     // head: nose→brow→ear→crown→neck
+      [6,7],[7,8],[8,9],[9,10],[10,11],          // back: neck→withers→mid→hip→haunch
+      [11,12],[12,13],[13,14],[14,15],            // tail: haunch→base→mid→low→tip
+      [11,16],[16,17],[17,18],                    // back leg: haunch→knee→ankle→paw
+      [18,19],[19,20],[20,21],                    // belly: paw→belly back→mid→front
+      [21,22],[22,23],[23,24],                    // front leg: belly→knee→ankle→paw
+      [24,25],[25,26],[26,27],[27,0]              // chest/jaw: paw→chest→jaw→chin→nose
     ];
     const bodyLen = pts.length;
     let svg = '<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">';
@@ -532,8 +734,12 @@ body {
       const pb = b < bodyLen ? pts[b] : eyes[b - bodyLen];
       svg += '<line class="ln" x1="' + pa.x + '" y1="' + pa.y + '" x2="' + pb.x + '" y2="' + pb.y + '"/>';
     });
-    pts.forEach(function(p) { svg += '<circle class="pt" cx="' + p.x + '" cy="' + p.y + '" r="0.45"/>'; });
-    eyes.forEach(function(p) { svg += '<circle class="pt eye" cx="' + p.x + '" cy="' + p.y + '" r="0.7"/>'; });
+    // Main body stars
+    pts.forEach(function(p) { svg += '<circle class="pt" cx="' + p.x + '" cy="' + p.y + '" r="0.5"/>'; });
+    // Spine stars (slightly larger for emphasis)
+    [7,8,9,10].forEach(function(i) { svg += '<circle class="pt spine" cx="' + pts[i].x + '" cy="' + pts[i].y + '" r="0.8"/>'; });
+    // Eyes (prominent gold)
+    eyes.forEach(function(p) { svg += '<circle class="pt eye" cx="' + p.x + '" cy="' + p.y + '" r="0.9"/>'; });
     svg += '</svg>';
     c.innerHTML = svg;
     // Page load choreography: invitation lines blur in one at a time
@@ -695,28 +901,35 @@ body {
   let s2ActiveFlower = null;
   let s2GrowthStart = 0;
   let s2GrowthRAF = null;
-  const s2GrowthDuration = 1400; // ms to grow fully
+  const s2GrowthDuration = 1800; // ms to grow fully — natural pace
 
   function buildRoseSVG() {
     return '<svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">' +
-      // Bud (initially visible)
-      '<g class="flower-bud">' +
-        '<path d="M50 200 L50 100" stroke="#6e7d54" stroke-width="3" fill="none"/>' +
-        '<ellipse cx="38" cy="130" rx="8" ry="5" fill="#6e7d54" transform="rotate(-30 38 130)"/>' +
-        '<ellipse cx="62" cy="145" rx="8" ry="5" fill="#7a8b5e" transform="rotate(30 62 145)"/>' +
-        '<ellipse cx="50" cy="80" rx="14" ry="20" fill="#9b2d4e" opacity="0.85"/>' +
-        '<path d="M50 60 Q42 70 50 80 Q58 70 50 60" fill="#b5546e"/>' +
+      // Stem (revealed first, grows from bottom)
+      '<path class="f-stem" d="M50 200 Q48 170 50 140 Q52 110 50 80" stroke="#8a9a6a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="120" stroke-dashoffset="120"/>' +
+      // Leaves (revealed second)
+      '<g class="f-leaves" opacity="0">' +
+        '<path d="M50 160 Q35 155 28 165 Q35 170 50 165 Z" fill="#7a8a5a"/>' +
+        '<path d="M50 130 Q65 125 72 135 Q65 140 50 135 Z" fill="#8a9a6a"/>' +
       '</g>' +
-      // Blooms (initially hidden, grow when planted)
-      '<g class="flower-blooms">' +
-        '<path d="M50 200 L50 110" stroke="#6e7d54" stroke-width="2.5" fill="none"/>' +
-        '<ellipse cx="36" cy="140" rx="8" ry="4" fill="#6e7d54" transform="rotate(-30 36 140)"/>' +
-        '<ellipse cx="64" cy="155" rx="8" ry="4" fill="#7a8b5e" transform="rotate(30 64 155)"/>' +
-        '<ellipse cx="50" cy="75" rx="22" ry="20" fill="#9b2d4e" opacity="0.75"/>' +
-        '<ellipse cx="42" cy="68" rx="15" ry="13" fill="#b5546e" opacity="0.85"/>' +
-        '<ellipse cx="58" cy="72" rx="14" ry="12" fill="#b5546e" opacity="0.85"/>' +
-        '<ellipse cx="50" cy="70" rx="9" ry="8" fill="#e08a7d"/>' +
-        '<circle cx="50" cy="70" r="3" fill="#5e2347"/>' +
+      // Bud (revealed third — closed bud)
+      '<g class="f-bud" opacity="0">' +
+        '<ellipse cx="50" cy="78" rx="10" ry="14" fill="#4a3a52"/>' +
+        '<path d="M40 75 Q45 65 50 70 Q55 65 60 75" fill="none" stroke="#6b4f5e" stroke-width="1.5"/>' +
+      '</g>' +
+      // Bloom (revealed last — petals open)
+      '<g class="f-bloom" opacity="0">' +
+        // Outer petals
+        '<ellipse cx="38" cy="72" rx="14" ry="12" fill="#9b2d4e" opacity="0.7" transform="rotate(-25 38 72)"/>' +
+        '<ellipse cx="62" cy="74" rx="14" ry="12" fill="#9b2d4e" opacity="0.7" transform="rotate(25 62 74)"/>' +
+        '<ellipse cx="50" cy="65" rx="13" ry="11" fill="#b5546e" opacity="0.8"/>' +
+        // Inner petals
+        '<ellipse cx="44" cy="72" rx="9" ry="8" fill="#c4607a" opacity="0.85"/>' +
+        '<ellipse cx="56" cy="73" rx="9" ry="8" fill="#c4607a" opacity="0.85"/>' +
+        '<ellipse cx="50" cy="68" rx="8" ry="7" fill="#e08a9d" opacity="0.9"/>' +
+        // Center
+        '<circle cx="50" cy="72" r="4" fill="#4a3a52"/>' +
+        '<circle cx="50" cy="72" r="2" fill="#e8c285"/>' +
       '</g>' +
       '</svg>';
   }
@@ -733,13 +946,55 @@ body {
     s2ActiveFlower = flower;
     s2GrowthStart = performance.now();
 
+    // Get SVG elements for staged reveal
+    const stem = flower.querySelector('.f-stem');
+    const leaves = flower.querySelector('.f-leaves');
+    const bud = flower.querySelector('.f-bud');
+    const bloom = flower.querySelector('.f-bloom');
+
     function grow() {
       if (!s2ActiveFlower || s2ActiveFlower !== flower) return;
       const elapsed = performance.now() - s2GrowthStart;
       const progress = Math.min(1, elapsed / s2GrowthDuration);
-      const eased = 1 - Math.pow(1 - progress, 2.5);
-      flower.style.transform = 'translateX(-50%) scale(' + eased + ')';
-      flower.style.opacity = Math.min(1, progress * 4);
+
+      // Stage 1 (0-30%): Stem grows from ground up
+      if (progress < 0.3) {
+        const stemProgress = progress / 0.3;
+        stem.style.strokeDashoffset = 120 * (1 - stemProgress);
+      } else {
+        stem.style.strokeDashoffset = 0;
+      }
+
+      // Stage 2 (25-50%): Leaves unfurl
+      if (progress > 0.25) {
+        const leafProgress = Math.min(1, (progress - 0.25) / 0.25);
+        leaves.style.opacity = leafProgress;
+        leaves.style.transform = 'scale(' + (0.5 + leafProgress * 0.5) + ')';
+        leaves.style.transformOrigin = '50px 160px';
+      }
+
+      // Stage 3 (45-70%): Bud forms
+      if (progress > 0.45) {
+        const budProgress = Math.min(1, (progress - 0.45) / 0.25);
+        bud.style.opacity = budProgress;
+        bud.style.transform = 'scale(' + (0.3 + budProgress * 0.7) + ')';
+        bud.style.transformOrigin = '50px 78px';
+      }
+
+      // Stage 4 (65-100%): Petals bloom
+      if (progress > 0.65) {
+        const bloomProgress = Math.min(1, (progress - 0.65) / 0.35);
+        bloom.style.opacity = bloomProgress;
+        bloom.style.transform = 'scale(' + (0.2 + bloomProgress * 0.8) + ')';
+        bloom.style.transformOrigin = '50px 72px';
+        // Fade out the bud as bloom opens
+        if (bloomProgress > 0.5) {
+          bud.style.opacity = Math.max(0, 1 - (bloomProgress - 0.5) * 2);
+        }
+      }
+
+      flower.style.opacity = 1;
+
       if (progress < 1) {
         s2GrowthRAF = requestAnimationFrame(grow);
       } else {
@@ -913,7 +1168,7 @@ body {
     }
   }
 
-  // ============ STAGE 5: REVEAL — typewriter with click-to-continue ============
+  // ============ STAGE 5: REVEAL — record player → desktop → typewriter ============
   const paragraphs = [
     "Some journeys are measured in miles, but yours has been measured in sleepless nights, silent prayers, moments of doubt, and the quiet determination to keep going when giving up would have been easier.",
     "Today, as you stand at this beautiful crossroads, you're not simply celebrating the end of an academic chapter; you're honoring every version of yourself that chose to believe there was something worth fighting for on the other side. Every lesson learned, every obstacle overcome, every tear hidden behind a smile has become part of the story that brought you here.",
@@ -927,23 +1182,122 @@ body {
   let s5Typing = false;
   let s5Done = false;
   let s5TypeInterval = null;
+  let s5Phase = 0; // 0=record player, 1=press start, 2=desktop, 3=typing
   let audioCtx = null;
   let grooveStarted = false;
+  let s5Audio = null;
 
   function initStage5() {
-    // Build paragraph elements
-    const wrap = document.getElementById('message-wrap');
-    wrap.innerHTML = '';
-    paragraphs.forEach((_, i) => {
-      const p = document.createElement('p');
-      p.className = 'message-p';
-      p.id = 'msg-p-' + i;
-      wrap.appendChild(p);
-    });
-    // Start typewriter (continue hint will be shown when the first paragraph finishes)
-    setTimeout(() => startTypingParagraph(0), 800);
-    // Start heart particles behind the message
-    startHearts();
+    s5Phase = 0;
+    // Show hint after 1.5s
+    setTimeout(() => {
+      if (s5Phase === 0) document.getElementById('rp-hint').classList.add('show');
+    }, 1500);
+    // Click handler on record player
+    const rp = document.getElementById('record-player');
+    rp.addEventListener('click', function() { s5PlayRecord(); });
+    rp.addEventListener('touchstart', function(e) { e.preventDefault(); s5PlayRecord(); });
+  }
+
+  function s5PlayRecord() {
+    if (s5Phase !== 0) return;
+    s5Phase = 1;
+    // Hide hint
+    document.getElementById('rp-hint').classList.remove('show');
+    // Drop tonearm
+    document.getElementById('tonearm').classList.add('dropped');
+    // After tonearm drops, spin vinyl
+    setTimeout(() => {
+      document.getElementById('vinyl-disc-group').classList.add('spinning');
+      // Try to play audio file if it exists
+      s5Audio = new Audio('song.mp3');
+      s5Audio.volume = 0;
+      s5Audio.loop = true;
+      s5Audio.play().then(() => {
+        // Fade in audio over 3s
+        let vol = 0;
+        const fadeIn = setInterval(() => {
+          vol += 0.03;
+          if (vol >= 0.7) { vol = 0.7; clearInterval(fadeIn); }
+          s5Audio.volume = vol;
+        }, 100);
+      }).catch(() => {
+        // No audio file or autoplay blocked — start bassline as fallback
+        startBassline();
+      });
+    }, 1400);
+    // After 4s, show "press start" overlay
+    setTimeout(() => {
+      if (s5Phase !== 1) return;
+      document.getElementById('record-player-wrap').classList.add('hide');
+      document.getElementById('press-start').classList.add('show');
+      s5Phase = 1;
+    }, 4000);
+  }
+
+  function s5PressStart() {
+    if (s5Phase !== 1) return;
+    s5Phase = 2;
+    document.getElementById('press-start').classList.remove('show');
+    // Fade out audio slightly
+    if (s5Audio) { s5Audio.volume = 0.4; }
+    // Show desktop
+    setTimeout(() => {
+      document.getElementById('desktop-wrap').classList.add('show');
+      // Start scramble after desktop appears
+      setTimeout(() => s5Scramble(), 800);
+    }, 800);
+  }
+
+  function s5Scramble() {
+    const scrambleEl = document.getElementById('scramble-text');
+    scrambleEl.classList.add('show');
+    const chars = '!@#$%^&*()_+-=[]{}|;:,.<>?/01ABCDEF0123456789~`';
+    const lines = 8;
+    const lineLen = 40;
+    let frame = 0;
+    const totalFrames = 30; // ~1.2s at 40ms per frame
+
+    function tick() {
+      let text = '';
+      for (let l = 0; l < lines; l++) {
+        for (let c = 0; c < lineLen; c++) {
+          if (frame > totalFrames * 0.6 && Math.random() > 0.3) {
+            text += ' ';
+          } else {
+            text += chars[Math.floor(Math.random() * chars.length)];
+          }
+        }
+        text += '\n';
+      }
+      scrambleEl.textContent = text;
+      frame++;
+      if (frame < totalFrames) {
+        setTimeout(tick, 40);
+      } else {
+        // Scramble done — stabilize
+        scrambleEl.classList.remove('show');
+        setTimeout(() => {
+          scrambleEl.style.display = 'none';
+          // Build paragraph elements for typewriter
+          const wrap = document.getElementById('message-wrap');
+          wrap.innerHTML = '';
+          paragraphs.forEach((_, i) => {
+            const p = document.createElement('p');
+            p.className = 'message-p';
+            p.id = 'msg-p-' + i;
+            wrap.appendChild(p);
+          });
+          document.getElementById('desktop-content').classList.add('show');
+          s5Phase = 3;
+          // Start heart particles
+          startHearts();
+          // Start typewriter
+          setTimeout(() => startTypingParagraph(0), 600);
+        }, 300);
+      }
+    }
+    tick();
   }
 
   function startTypingParagraph(idx) {
@@ -965,7 +1319,6 @@ body {
     const text = paragraphs[s5Index];
     if (s5CharIndex >= text.length) {
       s5Typing = false;
-      // Remove cursor, show continue hint
       p.innerHTML = text;
       if (s5Index < paragraphs.length - 1) {
         document.getElementById('continue-hint').classList.add('show');
@@ -974,7 +1327,6 @@ body {
       }
       return;
     }
-    // Start bassline on first paragraph
     if (s5Index === 0 && s5CharIndex === 0 && !grooveStarted) {
       startBassline();
     }
@@ -991,9 +1343,9 @@ body {
     }, 1500);
   }
 
-  // Click/press to advance
   function s5Advance() {
-    if (currentStage !== 4) return;
+    if (s5Phase === 1) { s5PressStart(); return; }
+    if (s5Phase !== 3) return;
     // If currently typing, speed up (finish paragraph)
     if (s5Typing) {
       clearTimeout(s5TypeInterval);
@@ -1107,6 +1459,9 @@ body {
       if (currentStage === 0) s1HoldEnd();
     }
   });
+  // Press start overlay click
+  document.getElementById('press-start').addEventListener('click', function() { s5PressStart(); });
+  document.getElementById('press-start').addEventListener('touchstart', function(e) { e.preventDefault(); s5PressStart(); });
 
   // ============ HEART PARTICLES (Stage 5 ambient) ============
   function startHearts() {
