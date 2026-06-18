@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Sev</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:wght@400;500;600;700;800&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dawn-1:#1a0a1a;--dawn-2:#4a1942;--dawn-3:#8b3a5e;--dawn-4:#d4748a;
+  --dawn-5:#f5c9a8;--dawn-6:#ffd9a0;
+  --rose:#c44569;--rose-deep:#9b2d4e;--rose-gold:#c9a96e;
+  --rose-light:#f9e0e5;--blush:#fce4ec;--pink-soft:#fdf2f8;--pink-medium:#fbcfe8;
+  --amber:#d4a574;--amber-deep:#b8860b;--amber-glow:#f0c674;
+  --autumn-rust:#b85c38;--autumn-red:#a0392e;
+  --monaco-blue:#4a90a4;--monaco-teal:#5b9ea6;
+  --ink:#3a1c2a;--ink-soft:#5a3a44;--white-warm:#fff9f5;--white-pure:#ffffff;
+  --serif-display:'Playfair Display',Georgia,serif;
+  --serif-body:'Cormorant Garamond',Georgia,serif;
+  --script:'Dancing Script',cursive;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--serif-body);background:var(--dawn-1);color:var(--ink);overflow-x:hidden;min-height:100vh;}
+button{border:none;background:none;cursor:pointer;font-family:inherit;color:inherit;}
+#app{position:relative;width:100%;min-height:100vh;}
+
+/* Progress */
+#progress{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(196,69,105,0.1);z-index:1000;opacity:0;transition:opacity 0.8s;}
+#progress.active{opacity:1;}
+#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--rose),var(--rose-gold),var(--amber));border-radius:0 2px 2px 0;transition:width 1.2s cubic-bezier(0.34,1.56,0.64,1);}
+#progress-labels{position:fixed;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:1000;opacity:0;transition:opacity 0.8s;}
+#progress-labels.active{opacity:0.7;}
+.petal-dot{width:10px;height:10px;border-radius:50% 0 50% 50%;background:rgba(196,69,105,0.2);transform:rotate(45deg);transition:all 0.6s;}
+.petal-dot.active{background:var(--rose);box-shadow:0 0 8px rgba(196,69,105,0.5);}
+
+/* Sections */
+.section{position:relative;width:100%;min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:2rem;text-align:center;opacity:0;visibility:hidden;position:absolute;top:0;left:0;transition:opacity 1.2s ease,visibility 1.2s;}
+.section.active{opacity:1;visibility:visible;position:relative;}
+
+/* Keyframes */
+@keyframes sunRise{0%{opacity:0;transform:translateX(-50%) translateY(60px);}100%{opacity:0.8;transform:translateX(-50%) translateY(0);}}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(30px);}100%{opacity:1;transform:translateY(0);}}
+@keyframes particleFloat{0%{transform:translateY(0) translateX(0);}100%{transform:translateY(-80px) translateX(20px);}}
+@keyframes roseGrow{0%{transform:scale(0) rotate(-180deg);opacity:0;}60%{transform:scale(1.1) rotate(5deg);opacity:1;}100%{transform:scale(1) rotate(-3deg);opacity:1;}}
+@keyframes blink{0%,90%,100%{opacity:1;}95%{opacity:0.2;}}
+@keyframes matchPulse{0%,100%{transform:rotateY(180deg) scale(1);}50%{transform:rotateY(180deg) scale(1.08);box-shadow:0 0 20px rgba(201,169,110,0.5);}}
+@keyframes leafFall{0%{transform:translateY(-50px) rotate(0deg);opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{transform:translateY(105vh) rotate(720deg);opacity:0;}}
+@keyframes leafCatch{0%{transform:scale(1);opacity:1;}100%{transform:scale(2) translateY(-20px);opacity:0;}}
+@keyframes leafMessageShow{0%{opacity:0;transform:translate(-50%,-40%) scale(0.9);}20%{opacity:1;transform:translate(-50%,-50%) scale(1);}80%{opacity:1;transform:translate(-50%,-50%) scale(1);}100%{opacity:0;transform:translate(-50%,-60%) scale(1.05);}}
+.reveal-show{opacity:1 !important;transform:translateY(0) !important;}
+.transition-soft{transition:opacity 1.5s ease,transform 1.5s ease;}
+
+/* DAWN */
+#dawn{background:linear-gradient(180deg,var(--dawn-1) 0%,var(--dawn-2) 15%,var(--dawn-3) 35%,var(--dawn-4) 55%,var(--dawn-5) 75%,var(--dawn-6) 90%,var(--white-warm) 100%);}
+#dawn .sun{position:absolute;bottom:20%;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,217,160,0.9) 0%,rgba(245,201,168,0.5) 40%,transparent 70%);opacity:0;filter:blur(2px);animation:sunRise 4s ease 0.5s forwards;}
+#dawn .welcome-text{position:relative;z-index:2;padding:0 1rem;}
+#dawn h1{font-family:var(--script);font-size:clamp(2.5rem,8vw,5rem);color:var(--white-warm);font-weight:600;margin-bottom:1rem;text-shadow:0 2px 20px rgba(196,69,105,0.3);opacity:0;animation:fadeUp 1.5s ease 1.5s forwards;}
+#dawn .subtitle{font-family:var(--serif-body);font-size:clamp(1rem,2.5vw,1.4rem);color:rgba(255,249,245,0.8);font-weight:300;font-style:italic;max-width:400px;margin:0 auto 2rem;line-height:1.6;opacity:0;animation:fadeUp 1.2s ease 2.5s forwards;}
+#dawn .enter-btn{padding:14px 42px;border:1px solid rgba(255,249,245,0.4);border-radius:2px;color:var(--white-warm);font-family:var(--serif-display);font-size:1rem;letter-spacing:3px;text-transform:uppercase;background:rgba(196,69,105,0.1);backdrop-filter:blur(6px);transition:all 0.4s;opacity:0;position:relative;z-index:2;animation:fadeUp 1s ease 3.5s forwards;}
+#dawn .enter-btn:hover{background:rgba(196,69,105,0.3);border-color:var(--rose-gold);transform:translateY(-2px);box-shadow:0 6px 20px rgba(196,69,105,0.2);}
+.particle{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,217,160,0.6);pointer-events:none;}
+
+/* GARDEN */
+#garden{background:linear-gradient(180deg,var(--white-warm) 0%,var(--pink-soft) 40%,var(--blush) 100%);}
+#garden .instruction{font-family:var(--serif-body);font-style:italic;font-size:1.2rem;color:var(--ink-soft);margin-bottom:0.5rem;}
+#garden .counter{font-family:var(--serif-display);font-size:0.85rem;color:var(--rose);letter-spacing:2px;margin-bottom:2rem;}
+#garden .garden-canvas{position:relative;width:100%;max-width:600px;height:400px;cursor:pointer;}
+.planted-rose{position:absolute;width:60px;height:60px;transform-origin:center bottom;animation:roseGrow 2s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+
+/* JAGUAR */
+#jaguar{background:linear-gradient(180deg,#1a0f1a 0%,#2a1520 30%,#3a1c2a 60%,#5a2838 100%);color:var(--white-warm);}
+#jaguar .jungle-bg{position:absolute;inset:0;opacity:0.3;background:radial-gradient(ellipse at 30% 70%,rgba(90,40,56,0.4) 0%,transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(74,25,66,0.3) 0%,transparent 50%);}
+#jaguar .instruction{font-family:var(--serif-body);font-style:italic;font-size:1.1rem;color:rgba(255,249,245,0.7);margin-bottom:2rem;z-index:2;position:relative;transition:opacity 0.5s;}
+.jaguar-eyes{position:relative;width:120px;height:60px;margin:0 auto;cursor:pointer;transition:opacity 0.8s,transform 0.8s;}
+.jaguar-eye{position:absolute;width:14px;height:8px;border-radius:50%;background:rgba(212,165,116,0.8);box-shadow:0 0 12px 4px rgba(212,165,116,0.4);animation:blink 4s infinite;}
+.jaguar-eye:nth-child(1){left:30px;top:20px;}
+.jaguar-eye:nth-child(2){right:30px;top:20px;animation-delay:0.1s;}
+#jaguar .jaguar-svg-container{position:relative;z-index:2;opacity:0;transform:translateY(20px);transition:all 1.5s cubic-bezier(0.22,1,0.36,1);}
+#jaguar .jaguar-svg-container.revealed{opacity:1;transform:translateY(0);}
+
+/* MONACO */
+#monaco{background:linear-gradient(180deg,var(--monaco-teal) 0%,#4a8090 30%,#3a6070 60%,#2a4050 100%);color:var(--white-warm);}
+#monaco .monaco-skyline{position:absolute;bottom:0;left:0;right:0;height:120px;opacity:0.15;pointer-events:none;}
+#monaco h2{font-family:var(--serif-display);font-size:clamp(1.8rem,4vw,2.8rem);color:var(--white-warm);margin-bottom:0.5rem;z-index:2;position:relative;}
+#monaco .instruction{font-family:var(--serif-body);font-style:italic;font-size:1rem;color:rgba(255,249,245,0.7);margin-bottom:1.5rem;z-index:2;position:relative;}
+.memory-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-width:500px;margin:0 auto;z-index:2;position:relative;}
+@media(max-width:480px){.memory-grid{grid-template-columns:repeat(4,1fr);gap:6px;}}
+.memory-card{aspect-ratio:3/4;perspective:600px;cursor:pointer;}
+.card-inner{position:relative;width:100%;height:100%;transition:transform 0.6s;transform-style:preserve-3d;}
+.memory-card.flipped .card-inner,.memory-card.matched .card-inner{transform:rotateY(180deg);}
+.card-face{position:absolute;inset:0;border-radius:6px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;padding:8px;text-align:center;}
+.card-front{background:linear-gradient(135deg,var(--monaco-teal),var(--monaco-blue));border:1px solid rgba(255,255,255,0.2);}
+.card-front::after{content:'\2726';font-size:1.5rem;color:rgba(255,255,255,0.3);}
+.card-back{background:linear-gradient(135deg,var(--blush),var(--white-warm));transform:rotateY(180deg);color:var(--ink);}
+.card-back .item-text{font-family:var(--serif-body);font-size:0.8rem;font-weight:600;}
+.memory-card.matched .card-back{background:linear-gradient(135deg,var(--rose-gold),var(--amber-glow));animation:matchPulse 0.6s;}
+.match-counter{margin-top:1rem;font-size:0.85rem;color:rgba(255,249,245,0.6);font-family:var(--serif-display);letter-spacing:1px;z-index:2;position:relative;}
+
+/* AUTUMN */
+#autumn{background:linear-gradient(180deg,#d4a574 0%,#c4854a 20%,#b8703a 40%,#a05a30 65%,#8a4525 100%);color:var(--white-warm);overflow:hidden;}
+#autumn h2{font-family:var(--serif-display);font-size:clamp(1.8rem,4vw,2.8rem);color:var(--white-warm);margin-bottom:0.5rem;z-index:10;position:relative;}
+#autumn .instruction{font-family:var(--serif-body);font-style:italic;font-size:1rem;color:rgba(255,249,245,0.7);margin-bottom:1rem;z-index:10;position:relative;}
+#autumn .leaf-counter{font-size:0.85rem;font-family:var(--serif-display);letter-spacing:1px;color:rgba(255,249,245,0.6);z-index:10;position:relative;margin-bottom:1rem;}
+.falling-leaf{position:absolute;width:36px;height:36px;cursor:pointer;z-index:5;animation:leafFall linear forwards;}
+.falling-leaf.caught{animation:leafCatch 0.8s ease forwards;}
+.leaf-message{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);max-width:400px;padding:2rem;text-align:center;z-index:20;font-family:var(--serif-body);font-size:1.2rem;line-height:1.6;color:var(--white-warm);font-style:italic;opacity:0;pointer-events:none;}
+.leaf-message.show{animation:leafMessageShow 3s ease forwards;}
+
+/* REVEAL */
+#reveal{background:linear-gradient(180deg,var(--dawn-3) 0%,var(--dawn-4) 30%,var(--dawn-5) 60%,var(--dawn-6) 85%,var(--white-warm) 100%);}
+#reveal .reveal-content{position:relative;z-index:5;max-width:600px;padding:0 1rem;}
+#reveal .grad-cap,#reveal h1,#reveal .grad-message,#reveal .signature,#reveal .audio-btn{transition:opacity 1.2s ease,transform 1.2s ease;}
+#reveal .grad-cap{width:80px;height:80px;margin:0 auto 1.5rem;opacity:0;transform:translateY(-30px);}
+#reveal h1{font-family:var(--serif-display);font-size:clamp(2rem,6vw,3.5rem);color:var(--rose-deep);margin-bottom:1.5rem;line-height:1.2;opacity:0;transform:translateY(30px);}
+#reveal .grad-message{font-family:var(--serif-body);font-size:clamp(1.1rem,2.5vw,1.3rem);line-height:1.9;color:var(--ink);margin-bottom:2rem;opacity:0;transform:translateY(20px);}
+#reveal .grad-message em{color:var(--rose);}
+#reveal .signature{font-family:var(--script);font-size:1.5rem;color:var(--rose-deep);margin-bottom:2rem;opacity:0;}
+#reveal .audio-btn{padding:12px 30px;border:1px solid var(--rose);border-radius:2px;color:var(--rose-deep);font-family:var(--serif-display);font-size:0.85rem;letter-spacing:2px;text-transform:uppercase;transition:all 0.4s;opacity:0;}
+#reveal .audio-btn:hover{background:var(--rose);color:var(--white-warm);transform:translateY(-2px);}
+
+/* Shared reveal messages */
+.reveal-msg,.jaguar-reveal,.monaco-reveal,.autumn-reveal{transition:opacity 1.5s ease,transform 1.5s ease;transform:translateY(10px);max-width:500px;font-family:var(--serif-body);font-size:1.15rem;line-height:1.8;font-style:italic;opacity:0;margin-top:1rem;}
+.reveal-msg{color:var(--ink);}
+.jaguar-reveal{color:rgba(255,249,245,0.9);}
+.monaco-reveal{color:rgba(255,249,245,0.9);z-index:2;position:relative;}
+.autumn-reveal{color:rgba(255,249,245,0.9);z-index:10;position:relative;}
+
+.next-btn{margin-top:2rem;padding:12px 36px;background:linear-gradient(135deg,var(--rose),var(--rose-deep));color:var(--white-warm);font-family:var(--serif-display);font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;border-radius:2px;transition:all 0.4s;opacity:0;}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(155,45,78,0.12);}
+.next-btn.visible{opacity:1;}
+.petal-confetti{position:fixed;pointer-events:none;z-index:1;opacity:0;}
+.rose-svg{width:100%;height:100%;}
+@media(max-width:600px){.section{padding:1.5rem 1rem;}#dawn .sun{width:150px;height:150px;}}
+</style>
+</head>
+<body>
+<div id="progress"><div id="progress-bar"></div></div>
+<div id="progress-labels">
+  <div class="petal-dot active" data-section="0"></div>
+  <div class="petal-dot" data-section="1"></div>
+  <div class="petal-dot" data-section="2"></div>
+  <div class="petal-dot" data-section="3"></div>
+  <div class="petal-dot" data-section="4"></div>
+  <div class="petal-dot" data-section="5"></div>
+</div>
+<div id="app">
+
+<section class="section active" id="dawn">
+  <div class="sun" id="sun"></div>
+  <div class="welcome-text">
+    <h1 id="dawn-title">For Sev</h1>
+    <p class="subtitle" id="dawn-subtitle">The garden waits in first light. Step onto the path — something beautiful is blooming for you.</p>
+    <button class="enter-btn" id="enter-btn" onclick="enterGarden()">Enter the Garden</button>
+  </div>
+</section>
+
+<section class="section" id="garden">
+  <p class="instruction">Click anywhere in the garden to plant a rose</p>
+  <p class="counter" id="garden-counter">0 of 3 planted</p>
+  <div class="garden-canvas" id="garden-canvas" onclick="plantRose(event)"></div>
+  <p class="reveal-msg" id="garden-reveal">You've always loved roses — the way they open slowly, unapologetically pink, thorns and all. Here, every rose you plant stays in bloom. This garden remembers what you give it.</p>
+  <button class="next-btn" id="garden-next" onclick="goToSection('jaguar')">Continue</button>
+</section>
+
+<section class="section" id="jaguar">
+  <div class="jungle-bg"></div>
+  <p class="instruction" id="jaguar-instruction">Something watches from the shadows... click the eyes</p>
+  <div class="jaguar-eyes" id="jaguar-eyes" onclick="revealJaguar()">
+    <div class="jaguar-eye"></div>
+    <div class="jaguar-eye"></div>
+  </div>
+  <div class="jaguar-svg-container" id="jaguar-svg-container">
+    <svg width="200" height="140" viewBox="0 0 200 140" fill="none">
+      <path d="M30 120 Q25 100 35 85 Q40 75 50 72 Q52 60 60 55 Q65 50 72 52 Q80 45 85 48 Q90 42 95 46 L100 44 Q105 40 110 45 Q115 42 120 48 Q130 42 135 50 Q145 48 150 55 Q165 55 170 65 Q180 70 175 85 Q180 95 170 105 L165 115 Q160 120 155 118 L145 120 Q140 125 135 122 L120 125 Q110 128 105 125 L90 128 Q80 130 75 127 L60 125 Q50 128 45 125 Q35 125 30 120 Z" fill="#1a0f1a" opacity="0.9"/>
+      <ellipse cx="82" cy="62" rx="4" ry="3" fill="#d4a574" opacity="0.9"/>
+      <ellipse cx="98" cy="60" rx="4" ry="3" fill="#d4a574" opacity="0.9"/>
+      <circle cx="60" cy="90" r="3" fill="#3a1c2a" opacity="0.5"/>
+      <circle cx="75" cy="95" r="2.5" fill="#3a1c2a" opacity="0.5"/>
+      <circle cx="100" cy="88" r="3" fill="#3a1c2a" opacity="0.5"/>
+      <circle cx="120" cy="92" r="2.5" fill="#3a1c2a" opacity="0.5"/>
+      <circle cx="140" cy="88" r="3" fill="#3a1c2a" opacity="0.5"/>
+      <circle cx="50" cy="105" r="2.5" fill="#3a1c2a" opacity="0.5"/>
+      <circle cx="90" cy="105" r="2" fill="#3a1c2a" opacity="0.5"/>
+      <circle cx="130" cy="105" r="2.5" fill="#3a1c2a" opacity="0.5"/>
+    </svg>
+  </div>
+  <p class="jaguar-reveal" id="jaguar-reveal">Golden eyes in the undergrowth. A jaguar doesn't announce itself — it simply is, fierce and quiet, moving through shadow like it owns the night. You know that energy. Feisty doesn't mean loud. It means unstoppable.</p>
+  <button class="next-btn" id="jaguar-next" onclick="goToSection('monaco')">Continue</button>
+</section>
+
+<section class="section" id="monaco">
+  <svg class="monaco-skyline" viewBox="0 0 1200 120" preserveAspectRatio="none">
+    <path d="M0,120 L0,80 L40,80 L40,60 L80,60 L80,70 L120,70 L120,50 L160,50 L160,65 L200,65 L200,40 L240,40 L240,55 L280,55 L280,45 L320,45 L320,70 L360,70 L360,50 L400,50 L400,60 L440,60 L440,35 L480,35 L480,55 L520,55 L520,65 L560,65 L560,45 L600,45 L600,55 L640,55 L640,40 L680,40 L680,60 L720,60 L720,50 L760,50 L760,65 L800,65 L800,45 L840,45 L840,55 L880,55 L880,70 L920,70 L920,50 L960,50 L960,60 L1000,60 L1000,45 L1040,45 L1040,65 L1080,65 L1080,55 L1120,55 L1120,70 L1160,70 L1160,80 L1200,80 L1200,120 Z" fill="rgba(255,255,255,0.5)"/>
+  </svg>
+  <h2>Monaco</h2>
+  <p class="instruction">Match each luxury to its word</p>
+  <div class="memory-grid" id="memory-grid"></div>
+  <p class="match-counter" id="match-counter">0 of 5 matched</p>
+  <p class="monaco-reveal" id="monaco-reveal">Sunlight on turquoise water. The clink of crystal, the scent of jasmine on warm wind — Monaco holds the kind of luxury that doesn't shout. It whispers, and you lean in to listen. Some memories are meant to be savored slowly.</p>
+  <button class="next-btn" id="monaco-next" onclick="goToSection('autumn')">Continue</button>
+</section>
+
+<section class="section" id="autumn">
+  <h2>The Autumn Path</h2>
+  <p class="instruction">Catch the falling leaves — each carries a wish</p>
+  <p class="leaf-counter" id="leaf-counter">0 of 6 caught</p>
+  <div id="leaf-container"></div>
+  <div class="leaf-message" id="leaf-message"></div>
+  <p class="autumn-reveal" id="autumn-reveal">Leaves falling like confetti in amber and rust. Autumn doesn't choose between sweet and savory — it gives you both, crisp apples and roasted chestnuts, endings and beginnings tangled together. This path holds a little of each.</p>
+  <button class="next-btn" id="autumn-next" onclick="goToSection('reveal')">Continue</button>
+</section>
+
+<section class="section" id="reveal">
+  <div class="reveal-content">
+    <svg class="grad-cap" id="grad-cap" viewBox="0 0 80 80" fill="none">
+      <path d="M40 15 L75 30 L40 45 L5 30 Z" fill="#9b2d4e"/>
+      <path d="M15 35 L15 50 Q40 62 65 50 L65 35" stroke="#9b2d4e" stroke-width="3" fill="none"/>
+      <line x1="75" y1="30" x2="75" y2="50" stroke="#c9a96e" stroke-width="2"/>
+      <circle cx="75" cy="52" r="4" fill="#c9a96e"/>
+      <path d="M73 52 Q71 58 70 62" stroke="#c9a96e" stroke-width="1.5" fill="none"/>
+    </svg>
+    <h1 id="reveal-title">Congratulations, Sev</h1>
+    <p class="grad-message" id="reveal-message">Sev, you did it. Not because the path was easy, but because you refused to quit — <em>feisty</em>, focused, moving to your own rhythm like that MJ bassline that never stops driving forward. The garden you've planted is just beginning to show its colors, and every rose, every golden leaf, every quiet roar of that jaguar spirit is yours. Congratulations, graduate. The world better get ready — you're only getting started.</p>
+    <p class="signature" id="reveal-signature">With love, your friend</p>
+    <button class="audio-btn" id="audio-btn" onclick="playGroove()">Play Celebration</button>
+  </div>
+</section>
+
+</div>
+<script>
+var state={currentSection:0,sections:['dawn','garden','jaguar','monaco','autumn','reveal'],rosesPlanted:0,jaguarRevealed:false,monacoMatched:0,leavesCaught:0,flippedCards:[],leafSpawnInterval:null,audioCtx:null};
+
+function goToSection(id){
+  var idx=state.sections.indexOf(id);if(idx===-1)return;
+  state.currentSection=idx;
+  var secs=document.querySelectorAll('.section');
+  for(var i=0;i<secs.length;i++)secs[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+  var pct=(idx/(state.sections.length-1))*100;
+  document.getElementById('progress-bar').style.width=pct+'%';
+  var dots=document.querySelectorAll('.petal-dot');
+  for(var j=0;j<dots.length;j++)dots[j].classList.toggle('active',j<=idx);
+  window.scrollTo(0,0);
+  if(id==='monaco'&&!document.getElementById('memory-grid').children.length)initMemoryGame();
+  if(id==='autumn'&&!state.leafSpawnInterval)startLeaves();
+  if(id==='reveal')triggerReveal();
+}
+
+function enterGarden(){
+  document.getElementById('progress').classList.add('active');
+  document.getElementById('progress-labels').classList.add('active');
+  goToSection('garden');
+}
+
+window.addEventListener('load',function(){createParticles();});
+
+function createParticles(){
+  var dawn=document.getElementById('dawn');
+  for(var i=0;i<20;i++){
+    var p=document.createElement('div');p.className='particle';
+    p.style.left=Math.random()*100+'%';p.style.top=Math.random()*100+'%';
+    p.style.opacity=Math.random()*0.5+0.2;
+    p.style.animation='particleFloat '+(Math.random()*6+4)+'s ease-in-out '+(Math.random()*2)+'s infinite alternate';
+    dawn.appendChild(p);
+  }
+}
+
+function plantRose(e){
+  if(state.rosesPlanted>=3)return;
+  var canvas=document.getElementById('garden-canvas');
+  var rect=canvas.getBoundingClientRect();
+  var x=e.clientX-rect.left-30;var y=e.clientY-rect.top-30;
+  var rose=document.createElement('div');rose.className='planted-rose';
+  rose.style.left=x+'px';rose.style.top=y+'px';
+  rose.innerHTML=createRoseSVG();canvas.appendChild(rose);
+  state.rosesPlanted++;
+  document.getElementById('garden-counter').textContent=state.rosesPlanted+' of 3 planted';
+  if(state.rosesPlanted>=3){
+    setTimeout(function(){
+      document.getElementById('garden-reveal').classList.add('reveal-show');
+      document.getElementById('garden-next').classList.add('visible');
+    },1000);
+  }
+}
+
+function createRoseSVG(){
+  var colors=[{outer:'#c44569',mid:'#e8628a',inner:'#f4a4b8'},{outer:'#d44569',mid:'#e87090',inner:'#f8b0c0'},{outer:'#b03560',mid:'#d4557a',inner:'#e890a8'}];
+  var c=colors[Math.floor(Math.random()*colors.length)];
+  var rot=Math.random()*360;
+  return '<svg class="rose-svg" viewBox="0 0 60 60" style="transform:rotate('+rot+'deg)">'+
+    '<path d="M30 55 L30 38" stroke="#4a7c3a" stroke-width="2" fill="none"/>'+
+    '<ellipse cx="24" cy="45" rx="5" ry="3" fill="#4a7c3a" transform="rotate(-30 24 45)"/>'+
+    '<ellipse cx="36" cy="48" rx="5" ry="3" fill="#5a8c4a" transform="rotate(30 36 48)"/>'+
+    '<ellipse cx="30" cy="25" rx="16" ry="15" fill="'+c.outer+'" opacity="0.85"/>'+
+    '<ellipse cx="26" cy="22" rx="11" ry="10" fill="'+c.mid+'" opacity="0.9"/>'+
+    '<ellipse cx="34" cy="26" rx="10" ry="9" fill="'+c.mid+'" opacity="0.9"/>'+
+    '<ellipse cx="30" cy="23" rx="7" ry="6" fill="'+c.inner+'" opacity="0.95"/>'+
+    '<circle cx="30" cy="23" r="3" fill="'+c.outer+'" opacity="0.7"/>'+
+    '<path d="M22 18 Q26 14 30 16 Q28 20 22 18" fill="'+c.inner+'" opacity="0.4"/>'+
+    '</svg>';
+}
+
+function revealJaguar(){
+  if(state.jaguarRevealed)return;state.jaguarRevealed=true;
+  var eyes=document.getElementById('jaguar-eyes');
+  eyes.style.opacity='0';eyes.style.transform='scale(0.5)';
+  var inst=document.getElementById('jaguar-instruction');inst.style.opacity='0';
+  setTimeout(function(){
+    eyes.style.display='none';
+    document.getElementById('jaguar-svg-container').classList.add('revealed');
+    setTimeout(function(){
+      document.getElementById('jaguar-reveal').classList.add('reveal-show');
+      document.getElementById('jaguar-next').classList.add('visible');
+    },1200);
+  },800);
+}
+
+var memoryPairs=[
+  {item:'Cartier Watch',word:'Timeless',id:0},
+  {item:'Silk Scarf',word:'Grace',id:1},
+  {item:'Casino Chip',word:'Fortune',id:2},
+  {item:'Chateau Yquem',word:'Golden',id:3},
+  {item:'Driving Gloves',word:'Control',id:4}
+];
+
+function initMemoryGame(){
+  var grid=document.getElementById('memory-grid');var cards=[];
+  memoryPairs.forEach(function(p){cards.push(Object.assign({},p,{type:'item'}));cards.push(Object.assign({},p,{type:'word'}));});
+  cards.sort(function(){return Math.random()-0.5;});
+  cards.forEach(function(card){
+    var el=document.createElement('div');el.className='memory-card';
+    el.dataset.id=card.id;el.dataset.type=card.type;
+    el.onclick=function(){flipCard(el);};
+    el.innerHTML='<div class="card-inner"><div class="card-face card-front"></div><div class="card-face card-back"><span class="item-text">'+(card.type==='item'?card.item:card.word)+'</span></div></div>';
+    grid.appendChild(el);
+  });
+}
+
+function flipCard(card){
+  if(card.classList.contains('flipped')||card.classList.contains('matched'))return;
+  if(state.flippedCards.length>=2)return;
+  card.classList.add('flipped');state.flippedCards.push(card);
+  if(state.flippedCards.length===2)setTimeout(checkMatch,800);
+}
+
+function checkMatch(){
+  var a=state.flippedCards[0],b=state.flippedCards[1];
+  if(a.dataset.id===b.dataset.id&&a.dataset.type!==b.dataset.type){
+    a.classList.add('matched');b.classList.add('matched');state.monacoMatched++;
+    document.getElementById('match-counter').textContent=state.monacoMatched+' of 5 matched';
+    if(state.monacoMatched>=5){
+      setTimeout(function(){
+        document.getElementById('monaco-reveal').classList.add('reveal-show');
+        document.getElementById('monaco-next').classList.add('visible');
+      },800);
+    }
+  }else{a.classList.remove('flipped');b.classList.remove('flipped');}
+  state.flippedCards=[];
+}
+
+var leafMessages=['May your roots go deep and your branches reach fearless toward the light.','The sweetest victories are the ones you fought for.','Autumn teaches us that letting go can be breathtakingly beautiful.','Stay sharp, stay soft — the world needs both of you.','Every ending is a threshold. Step through.','You were made for more than surviving. You were made for blooming.'];
+var leafColors=['#d4742a','#c4651a','#b85520','#a04525','#e8852a','#cc7028'];
+
+function createLeafSVG(color){
+  return '<svg viewBox="0 0 36 36" width="36" height="36"><path d="M18 4 Q28 8 30 18 Q28 28 18 32 Q8 28 6 18 Q8 8 18 4 Z" fill="'+color+'" opacity="0.85"/><path d="M18 6 L18 30" stroke="rgba(0,0,0,0.2)" stroke-width="1" fill="none"/><path d="M18 12 L12 8 M18 12 L24 8 M18 20 L10 16 M18 20 L26 16 M18 26 L14 22 M18 26 L22 22" stroke="rgba(0,0,0,0.15)" stroke-width="0.5" fill="none"/></svg>';
+}
+
+function startLeaves(){
+  spawnLeaf();
+  state.leafSpawnInterval=setInterval(function(){
+    if(state.leavesCaught<6)spawnLeaf();else clearInterval(state.leafSpawnInterval);
+  },2500);
+}
+
+function spawnLeaf(){
+  if(state.leavesCaught>=6)return;
+  var autumn=document.getElementById('autumn');
+  var leaf=document.createElement('div');leaf.className='falling-leaf';
+  leaf.style.left=Math.random()*80+10+'%';leaf.style.top='-50px';
+  leaf.style.animationDuration=(Math.random()*4+6)+'s';
+  leaf.innerHTML=createLeafSVG(leafColors[Math.floor(Math.random()*leafColors.length)]);
+  leaf.onclick=function(){catchLeaf(leaf);};
+  autumn.appendChild(leaf);
+  setTimeout(function(){if(leaf.parentNode)leaf.remove();},12000);
+}
+
+function catchLeaf(leaf){
+  if(leaf.classList.contains('caught'))return;
+  leaf.classList.add('caught');
+  var msgIdx=state.leavesCaught;state.leavesCaught++;
+  document.getElementById('leaf-counter').textContent=state.leavesCaught+' of 6 caught';
+  var msgEl=document.getElementById('leaf-message');
+  msgEl.textContent=leafMessages[msgIdx];
+  msgEl.classList.remove('show');void msgEl.offsetWidth;msgEl.classList.add('show');
+  setTimeout(function(){leaf.remove();},800);
+  if(state.leavesCaught>=6){
+    clearInterval(state.leafSpawnInterval);
+    setTimeout(function(){
+      document.getElementById('autumn-reveal').classList.add('reveal-show');
+      document.getElementById('autumn-next').classList.add('visible');
+    },3000);
+  }
+}
+
+function triggerReveal(){
+  setTimeout(function(){var el=document.getElementById('grad-cap');el.style.opacity='1';el.style.transform='translateY(0)';},500);
+  setTimeout(function(){var el=document.getElementById('reveal-title');el.style.opacity='1';el.style.transform='translateY(0)';},1200);
+  setTimeout(function(){var el=document.getElementById('reveal-message');el.style.opacity='1';el.style.transform='translateY(0)';},2000);
+  setTimeout(function(){document.getElementById('reveal-signature').style.opacity='1';},3000);
+  setTimeout(function(){document.getElementById('audio-btn').style.opacity='1';},3500);
+  setTimeout(startPetalConfetti,1500);
+}
+
+function startPetalConfetti(){
+  var colors=['#c44569','#e8628a','#f4a4b8','#c9a96e','#d4a574','#f5c9a8'];
+  for(var i=0;i<40;i++){
+    (function(idx){
+      setTimeout(function(){
+        var petal=document.createElement('div');petal.className='petal-confetti';
+        petal.style.left=Math.random()*100+'%';petal.style.top='-20px';
+        petal.style.width=(Math.random()*12+8)+'px';petal.style.height=(Math.random()*10+8)+'px';
+        petal.style.background=colors[Math.floor(Math.random()*colors.length)];
+        petal.style.borderRadius='50% 0 50% 50%';petal.style.opacity=Math.random()*0.4+0.4;
+        petal.style.transform='rotate('+Math.random()*360+'deg)';
+        petal.style.transition='transform '+(Math.random()*3+3)+'s linear, opacity '+(Math.random()*3+3)+'s linear';
+        document.body.appendChild(petal);
+        requestAnimationFrame(function(){
+          petal.style.transform='translateY('+(window.innerHeight+100)+'px) translateX('+((Math.random()-0.5)*200)+'px) rotate('+(Math.random()*720)+'deg)';
+          setTimeout(function(){petal.remove();},6000);
+        });
+      },idx*80);
+    })(i);
+  }
+}
+
+function playGroove(){
+  if(!state.audioCtx)state.audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  var ctx=state.audioCtx;if(ctx.state==='suspended')ctx.resume();
+  var bpm=116;var beat=60/bpm;var bars=8;
+  var bassPattern=[{note:65.41,time:0},{note:65.41,time:beat*0.5},{note:49.00,time:beat*1},{note:65.41,time:beat*1.5},{note:77.78,time:beat*2},{note:65.41,time:beat*2.5},{note:49.00,time:beat*3},{note:58.27,time:beat*3.5}];
+  var now=ctx.currentTime;
+  for(var bar=0;bar<bars;bar++){
+    var barStart=now+bar*beat*4;
+    bassPattern.forEach(function(bp){
+      var osc=ctx.createOscillator();var gain=ctx.createGain();var t=barStart+bp.time;
+      osc.type='sawtooth';osc.frequency.value=bp.note;
+      var filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=600;filter.Q.value=8;
+      gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(0.15,t+0.01);gain.gain.exponentialRampToValueAtTime(0.001,t+beat*0.4);
+      osc.connect(filter);filter.connect(gain);gain.connect(ctx.destination);
+      osc.start(t);osc.stop(t+beat*0.5);
+    });
+    for(var h=0;h<8;h++){
+      var t=barStart+h*beat*0.5+beat*0.25;
+      var noise=ctx.createBufferSource();
+      var buf=ctx.createBuffer(1,2048,ctx.sampleRate);
+      var data=buf.getChannelData(0);
+      for(var ii=0;ii<2048;ii++)data[ii]=Math.random()*2-1;
+      noise.buffer=buf;
+      var hpf=ctx.createBiquadFilter();hpf.type='highpass';hpf.frequency.value=8000;
+      var hgain=ctx.createGain();hgain.gain.setValueAtTime(0.03,t);hgain.gain.exponentialRampToValueAtTime(0.001,t+0.05);
+      noise.connect(hpf);hpf.connect(hgain);hgain.connect(ctx.destination);
+      noise.start(t);noise.stop(t+0.05);
+    }
+    [0,2].forEach(function(beatNum){
+      var t=barStart+beatNum*beat;
+      var osc=ctx.createOscillator();var gain=ctx.createGain();
+      osc.frequency.setValueAtTime(150,t);osc.frequency.exponentialRampToValueAtTime(40,t+0.1);
+      gain.gain.setValueAtTime(0.2,t);gain.gain.exponentialRampToValueAtTime(0.001,t+0.15);
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.start(t);osc.stop(t+0.15);
+    });
+  }
+  var btn=document.getElementById('audio-btn');btn.textContent='Playing...';btn.disabled=true;
+  setTimeout(function(){btn.textContent='Play Again';btn.disabled=false;},bars*beat*4*1000);
+}
+</script>
+</body>
+</html>
