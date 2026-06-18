@@ -1,562 +1,680 @@
-1|<!DOCTYPE html>
-2|<html lang="en">
-3|<head>
-4|<meta charset="UTF-8">
-5|<meta name="viewport" content="width=device-width, initial-scale=1.0">
-6|<title>For Sev</title>
-7|<link rel="preconnect" href="https://fonts.googleapis.com">
-8|<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-9|<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Playfair+Display:wght@400;500;600;700;800&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
-10|<style>
-11|:root {
-12|  --dawn-1:#1a0a1a;--dawn-2:#4a1942;--dawn-3:#8b3a5e;--dawn-4:#d4748a;
-13|  --dawn-5:#f5c9a8;--dawn-6:#ffd9a0;
-14|  --rose:#c44569;--rose-deep:#9b2d4e;--rose-gold:#c9a96e;
-15|  --rose-light:#f9e0e5;--blush:#fce4ec;--pink-soft:#fdf2f8;--pink-medium:#fbcfe8;
-16|  --amber:#d4a574;--amber-deep:#b8860b;--amber-glow:#f0c674;
-17|  --autumn-rust:#b85c38;--autumn-red:#a0392e;
-18|  --monaco-blue:#4a90a4;--monaco-teal:#5b9ea6;
-19|  --ink:#3a1c2a;--ink-soft:#5a3a44;--white-warm:#fff9f5;--white-pure:#ffffff;
-20|  --serif-display:'Playfair Display',Georgia,serif;
-21|  --serif-body:'Cormorant Garamond',Georgia,serif;
-22|  --script:'Dancing Script',cursive;
-23|}
-24|*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-25|html{scroll-behavior:smooth;}
-26|body{font-family:var(--serif-body);background:var(--dawn-1);color:var(--ink);overflow-x:hidden;min-height:100vh;}
-27|button{border:none;background:none;cursor:pointer;font-family:inherit;color:inherit;}
-28|#app{position:relative;width:100%;min-height:100vh;}
-29|
-30|/* Progress */
-31|#progress{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(196,69,105,0.1);z-index:1000;opacity:0;transition:opacity 0.8s;}
-32|#progress.active{opacity:1;}
-33|#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--rose),var(--rose-gold),var(--amber));border-radius:0 2px 2px 0;transition:width 1.2s cubic-bezier(0.34,1.56,0.64,1);}
-34|#progress-labels{position:fixed;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:1000;opacity:0;transition:opacity 0.8s;}
-35|#progress-labels.active{opacity:0.7;}
-36|.petal-dot{width:10px;height:10px;border-radius:50% 0 50% 50%;background:rgba(196,69,105,0.2);transform:rotate(45deg);transition:all 0.6s;}
-37|.petal-dot.active{background:var(--rose);box-shadow:0 0 8px rgba(196,69,105,0.5);}
-38|
-39|/* Sections */
-40|.section{position:relative;width:100%;min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:2rem;text-align:center;opacity:0;visibility:hidden;position:absolute;top:0;left:0;transition:opacity 1.2s ease,visibility 1.2s;}
-41|.section.active{opacity:1;visibility:visible;position:relative;}
-42|
-43|/* Keyframes */
-44|@keyframes sunRise{0%{opacity:0;transform:translateX(-50%) translateY(60px);}100%{opacity:0.8;transform:translateX(-50%) translateY(0);}}
-45|@keyframes fadeUp{0%{opacity:0;transform:translateY(30px);}100%{opacity:1;transform:translateY(0);}}
-46|@keyframes particleFloat{0%{transform:translateY(0) translateX(0);}100%{transform:translateY(-80px) translateX(20px);}}
-47|@keyframes roseGrow{0%{transform:scale(0) rotate(-180deg);opacity:0;}60%{transform:scale(1.1) rotate(5deg);opacity:1;}100%{transform:scale(1) rotate(-3deg);opacity:1;}}
-48|@keyframes blink{0%,90%,100%{opacity:1;}95%{opacity:0.2;}}
-49|@keyframes matchPulse{0%,100%{transform:rotateY(180deg) scale(1);}50%{transform:rotateY(180deg) scale(1.08);box-shadow:0 0 20px rgba(201,169,110,0.5);}}
-50|@keyframes leafFall{0%{transform:translateY(-50px) rotate(0deg);opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{transform:translateY(105vh) rotate(720deg);opacity:0;}}
-51|@keyframes leafCatch{0%{transform:scale(1);opacity:1;}100%{transform:scale(2) translateY(-20px);opacity:0;}}
-52|@keyframes leafMessageShow{0%{opacity:0;transform:translate(-50%,-40%) scale(0.9);}20%{opacity:1;transform:translate(-50%,-50%) scale(1);}80%{opacity:1;transform:translate(-50%,-50%) scale(1);}100%{opacity:0;transform:translate(-50%,-60%) scale(1.05);}}
-53|.reveal-show{opacity:1 !important;transform:translateY(0) !important;}
-54|.transition-soft{transition:opacity 1.5s ease,transform 1.5s ease;}
-55|
-56|/* DAWN */
-57|#dawn{background:linear-gradient(180deg,var(--dawn-1) 0%,var(--dawn-2) 15%,var(--dawn-3) 35%,var(--dawn-4) 55%,var(--dawn-5) 75%,var(--dawn-6) 90%,var(--white-warm) 100%);}
-58|#dawn .sun{position:absolute;bottom:20%;left:50%;transform:translateX(-50%);width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,217,160,0.9) 0%,rgba(245,201,168,0.5) 40%,transparent 70%);opacity:0;filter:blur(2px);animation:sunRise 4s ease 0.5s forwards;}
-59|#dawn .welcome-text{position:relative;z-index:2;padding:0 1rem;}
-60|#dawn h1{font-family:var(--script);font-size:clamp(2.5rem,8vw,5rem);color:var(--white-warm);font-weight:600;margin-bottom:1rem;text-shadow:0 2px 20px rgba(196,69,105,0.3);opacity:0;animation:fadeUp 1.5s ease 1.5s forwards;}
-61|#dawn .subtitle{font-family:var(--serif-body);font-size:clamp(1rem,2.5vw,1.4rem);color:rgba(255,249,245,0.8);font-weight:300;font-style:italic;max-width:400px;margin:0 auto 2rem;line-height:1.6;opacity:0;animation:fadeUp 1.2s ease 2.5s forwards;}
-62|#dawn .enter-btn{padding:14px 42px;border:1px solid rgba(255,249,245,0.4);border-radius:2px;color:var(--white-warm);font-family:var(--serif-display);font-size:1rem;letter-spacing:3px;text-transform:uppercase;background:rgba(196,69,105,0.1);backdrop-filter:blur(6px);transition:all 0.4s;opacity:0;position:relative;z-index:2;animation:fadeUp 1s ease 3.5s forwards;}
-63|#dawn .enter-btn:hover{background:rgba(196,69,105,0.3);border-color:var(--rose-gold);transform:translateY(-2px);box-shadow:0 6px 20px rgba(196,69,105,0.2);}
-64|.particle{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,217,160,0.6);pointer-events:none;}
-65|
-66|/* GARDEN */
-67|#garden{background:linear-gradient(180deg,var(--white-warm) 0%,var(--pink-soft) 40%,var(--blush) 100%);}
-68|#garden .instruction{font-family:var(--serif-body);font-style:italic;font-size:1.2rem;color:var(--ink-soft);margin-bottom:0.5rem;}
-69|#garden .counter{font-family:var(--serif-display);font-size:0.85rem;color:var(--rose);letter-spacing:2px;margin-bottom:2rem;}
-70|#garden .garden-canvas{position:relative;width:100%;max-width:600px;height:400px;cursor:pointer;}
-71|.planted-rose{position:absolute;width:60px;height:60px;transform-origin:center bottom;animation:roseGrow 2s cubic-bezier(0.34,1.56,0.64,1) forwards;}
-72|
-73|/* JAGUAR */
-74|#jaguar{background:linear-gradient(180deg,#1a0f1a 0%,#2a1520 30%,#3a1c2a 60%,#5a2838 100%);color:var(--white-warm);}
-75|#jaguar .jungle-bg{position:absolute;inset:0;opacity:0.3;background:radial-gradient(ellipse at 30% 70%,rgba(90,40,56,0.4) 0%,transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(74,25,66,0.3) 0%,transparent 50%);}
-76|#jaguar .instruction{font-family:var(--serif-body);font-style:italic;font-size:1.1rem;color:rgba(255,249,245,0.7);margin-bottom:2rem;z-index:2;position:relative;transition:opacity 0.5s;}
-77|.jaguar-eyes{position:relative;width:120px;height:60px;margin:0 auto;cursor:pointer;transition:opacity 0.8s,transform 0.8s;}
-78|.jaguar-eye{position:absolute;width:14px;height:8px;border-radius:50%;background:rgba(212,165,116,0.8);box-shadow:0 0 12px 4px rgba(212,165,116,0.4);animation:blink 4s infinite;}
-79|.jaguar-eye:nth-child(1){left:30px;top:20px;}
-80|.jaguar-eye:nth-child(2){right:30px;top:20px;animation-delay:0.1s;}
-81|#jaguar .jaguar-svg-container{position:relative;z-index:2;opacity:0;transform:translateY(20px);transition:all 1.5s cubic-bezier(0.22,1,0.36,1);}
-82|#jaguar .jaguar-svg-container.revealed{opacity:1;transform:translateY(0);}
-83|
-84|/* MONACO */
-85|#monaco{background:linear-gradient(180deg,var(--monaco-teal) 0%,#4a8090 30%,#3a6070 60%,#2a4050 100%);color:var(--white-warm);}
-86|#monaco .monaco-skyline{position:absolute;bottom:0;left:0;right:0;height:120px;opacity:0.15;pointer-events:none;}
-87|#monaco h2{font-family:var(--serif-display);font-size:clamp(1.8rem,4vw,2.8rem);color:var(--white-warm);margin-bottom:0.5rem;z-index:2;position:relative;}
-88|#monaco .instruction{font-family:var(--serif-body);font-style:italic;font-size:1rem;color:rgba(255,249,245,0.7);margin-bottom:1.5rem;z-index:2;position:relative;}
-89|.memory-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-width:500px;margin:0 auto;z-index:2;position:relative;}
-90|@media(max-width:480px){.memory-grid{grid-template-columns:repeat(4,1fr);gap:6px;}}
-91|.memory-card{aspect-ratio:3/4;perspective:600px;cursor:pointer;}
-92|.card-inner{position:relative;width:100%;height:100%;transition:transform 0.6s;transform-style:preserve-3d;}
-93|.memory-card.flipped .card-inner,.memory-card.matched .card-inner{transform:rotateY(180deg);}
-94|.card-face{position:absolute;inset:0;border-radius:6px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;padding:8px;text-align:center;}
-95|.card-front{background:linear-gradient(135deg,var(--monaco-teal),var(--monaco-blue));border:1px solid rgba(255,255,255,0.2);}
-96|.card-front::after{content:'\2726';font-size:1.5rem;color:rgba(255,255,255,0.3);}
-97|.card-back{background:linear-gradient(135deg,var(--blush),var(--white-warm));transform:rotateY(180deg);color:var(--ink);}
-98|.card-back .item-text{font-family:var(--serif-body);font-size:0.8rem;font-weight:600;}
-99|.memory-card.matched .card-back{background:linear-gradient(135deg,var(--rose-gold),var(--amber-glow));animation:matchPulse 0.6s;}
-100|.match-counter{margin-top:1rem;font-size:0.85rem;color:rgba(255,249,245,0.6);font-family:var(--serif-display);letter-spacing:1px;z-index:2;position:relative;}
-101|
-102|/* AUTUMN */
-103|#autumn{background:linear-gradient(180deg,#d4a574 0%,#c4854a 20%,#b8703a 40%,#a05a30 65%,#8a4525 100%);color:var(--white-warm);overflow:hidden;}
-104|#autumn h2{font-family:var(--serif-display);font-size:clamp(1.8rem,4vw,2.8rem);color:var(--white-warm);margin-bottom:0.5rem;z-index:10;position:relative;}
-105|#autumn .instruction{font-family:var(--serif-body);font-style:italic;font-size:1rem;color:rgba(255,249,245,0.7);margin-bottom:1rem;z-index:10;position:relative;}
-106|#autumn .leaf-counter{font-size:0.85rem;font-family:var(--serif-display);letter-spacing:1px;color:rgba(255,249,245,0.6);z-index:10;position:relative;margin-bottom:1rem;}
-107|.falling-leaf{position:absolute;width:36px;height:36px;cursor:pointer;z-index:5;animation:leafFall linear forwards;}
-108|.falling-leaf.caught{animation:leafCatch 0.8s ease forwards;}
-109|.leaf-message{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);max-width:400px;padding:2rem;text-align:center;z-index:20;font-family:var(--serif-body);font-size:1.2rem;line-height:1.6;color:var(--white-warm);font-style:italic;opacity:0;pointer-events:none;}
-110|.leaf-message.show{animation:leafMessageShow 3s ease forwards;}
-111|
-112|/* REVEAL */
-113|#reveal{background:linear-gradient(180deg,var(--dawn-3) 0%,var(--dawn-4) 30%,var(--dawn-5) 60%,var(--dawn-6) 85%,var(--white-warm) 100%);}
-114|#reveal .reveal-content{position:relative;z-index:5;max-width:600px;padding:0 1rem;}
-115|#reveal .grad-cap,#reveal h1,#reveal .grad-message,#reveal .signature,#reveal .audio-btn{transition:opacity 1.2s ease,transform 1.2s ease;}
-116|#reveal .grad-cap{width:80px;height:80px;margin:0 auto 1.5rem;opacity:0;transform:translateY(-30px);}
-117|#reveal h1{font-family:var(--serif-display);font-size:clamp(2rem,6vw,3.5rem);color:var(--rose-deep);margin-bottom:1.5rem;line-height:1.2;opacity:0;transform:translateY(30px);}
-118|#reveal .grad-message{font-family:var(--serif-body);font-size:clamp(1.1rem,2.5vw,1.3rem);line-height:1.9;color:var(--ink);margin-bottom:2rem;opacity:0;transform:translateY(20px);}
-119|#reveal .grad-message em{color:var(--rose);}
-120|#reveal .signature{font-family:var(--script);font-size:1.5rem;color:var(--rose-deep);margin-bottom:2rem;opacity:0;}
-121|#reveal .audio-btn{padding:12px 30px;border:1px solid var(--rose);border-radius:2px;color:var(--rose-deep);font-family:var(--serif-display);font-size:0.85rem;letter-spacing:2px;text-transform:uppercase;transition:all 0.4s;opacity:0;}
-122|#reveal .audio-btn:hover{background:var(--rose);color:var(--white-warm);transform:translateY(-2px);}
-123|
-124|/* Shared reveal messages */
-125|.reveal-msg,.jaguar-reveal,.monaco-reveal,.autumn-reveal{transition:opacity 1.5s ease,transform 1.5s ease;transform:translateY(10px);max-width:500px;font-family:var(--serif-body);font-size:1.15rem;line-height:1.8;font-style:italic;opacity:0;margin-top:1rem;}
-126|.reveal-msg{color:var(--ink);}
-127|.jaguar-reveal{color:rgba(255,249,245,0.9);}
-128|.monaco-reveal{color:rgba(255,249,245,0.9);z-index:2;position:relative;}
-129|.autumn-reveal{color:rgba(255,249,245,0.9);z-index:10;position:relative;}
-130|
-131|.next-btn{margin-top:2rem;padding:12px 36px;background:linear-gradient(135deg,var(--rose),var(--rose-deep));color:var(--white-warm);font-family:var(--serif-display);font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;border-radius:2px;transition:all 0.4s;opacity:0;}
-132|.next-btn:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(155,45,78,0.12);}
-133|.next-btn.visible{opacity:1;}
-134|.petal-confetti{position:fixed;pointer-events:none;z-index:1;opacity:0;}
-135|.rose-svg{width:100%;height:100%;}
-136|@media(max-width:600px){.section{padding:1.5rem 1rem;}#dawn .sun{width:150px;height:150px;}}
-137|
-.pollen{position:absolute;width:4px;height:4px;background:#ffd700;border-radius:50%;pointer-events:none;animation:pollenFade 0.8s ease-out forwards;z-index:10;}
-@keyframes pollenFade{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0);}}
-:focus-visible{outline:2px solid #ff8da1;outline-offset:3px;border-radius:2px;}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;}
-.feisty-burst{position:fixed;width:16px;height:16px;background:radial-gradient(circle,#ff8da1,#e6526e);border-radius:50% 0 50% 50%;pointer-events:none;animation:feistyBurst 1.2s ease-out forwards;z-index:9999;}
-@keyframes feistyBurst{0%{opacity:1;transform:translate(0,0) rotate(0deg) scale(1);}100%{opacity:0;transform:translate(var(--bx),var(--by)) rotate(720deg) scale(0);}}
-#feisty-msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--script);font-size:3rem;color:var(--rose);text-shadow:0 0 20px rgba(196,69,105,0.4);z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.5s;}
-#feisty-msg.show{opacity:1;}
-</style>
-138|</head>
-139|<body>
-140|<div id="progress"><div id="progress-bar"></div></div>
-141|<div id="progress-labels">
-142|  <div class="petal-dot active" data-section="0"></div>
-143|  <div class="petal-dot" data-section="1"></div>
-144|  <div class="petal-dot" data-section="2"></div>
-145|  <div class="petal-dot" data-section="3"></div>
-146|  <div class="petal-dot" data-section="4"></div>
-147|  <div class="petal-dot" data-section="5"></div>
-148|</div>
-149|<div id="announcer" aria-live="polite" class="sr-only"></div>
-<div id="feisty-msg"></div>
-<div id="app">
-150|
-151|<section class="section active" id="dawn">
-152|  <div class="sun" id="sun"></div>
-153|  <div class="welcome-text">
-154|    <h1 id="dawn-title">For Sev</h1>
-155|    <p class="subtitle" id="dawn-subtitle">The garden waits in first light. Step onto the path — something beautiful is blooming for you.</p>
-156|    <button class="enter-btn" id="enter-btn" onclick="enterGarden()">Enter the Garden</button>
-157|  </div>
-158|</section>
-159|
-160|<section class="section" id="garden">
-161|  <p class="instruction">Click anywhere in the garden to plant a rose</p>
-162|  <p class="counter" id="garden-counter">0 of 3 planted</p>
-163|  <div class="garden-canvas" id="garden-canvas" onclick="plantRose(event)"></div>
-164|  <p class="reveal-msg" id="garden-reveal">You've always loved roses — the way they open slowly, unapologetically pink, thorns and all. Here, every rose you plant stays in bloom. This garden remembers what you give it.</p>
-165|  <button class="next-btn" id="garden-next" onclick="goToSection('jaguar')">Continue</button>
-166|</section>
-167|
-168|<section class="section" id="jaguar">
-169|  <div class="jungle-bg"></div>
-170|  <p class="instruction" id="jaguar-instruction">Something watches from the shadows... click the eyes</p>
-171|  <div class="jaguar-eyes" id="jaguar-eyes" onclick="revealJaguar()">
-172|    <div class="jaguar-eye"></div>
-173|    <div class="jaguar-eye"></div>
-174|  </div>
-175|  <div class="jaguar-svg-container" id="jaguar-svg-container">
-176|    <svg width="200" height="140" viewBox="0 0 200 140" fill="none">
-177|      <path d="M30 120 Q25 100 35 85 Q40 75 50 72 Q52 60 60 55 Q65 50 72 52 Q80 45 85 48 Q90 42 95 46 L100 44 Q105 40 110 45 Q115 42 120 48 Q130 42 135 50 Q145 48 150 55 Q165 55 170 65 Q180 70 175 85 Q180 95 170 105 L165 115 Q160 120 155 118 L145 120 Q140 125 135 122 L120 125 Q110 128 105 125 L90 128 Q80 130 75 127 L60 125 Q50 128 45 125 Q35 125 30 120 Z" fill="#1a0f1a" opacity="0.9"/>
-178|      <ellipse cx="82" cy="62" rx="4" ry="3" fill="#d4a574" opacity="0.9"/>
-179|      <ellipse cx="98" cy="60" rx="4" ry="3" fill="#d4a574" opacity="0.9"/>
-180|      <circle cx="60" cy="90" r="3" fill="#3a1c2a" opacity="0.5"/>
-181|      <circle cx="75" cy="95" r="2.5" fill="#3a1c2a" opacity="0.5"/>
-182|      <circle cx="100" cy="88" r="3" fill="#3a1c2a" opacity="0.5"/>
-183|      <circle cx="120" cy="92" r="2.5" fill="#3a1c2a" opacity="0.5"/>
-184|      <circle cx="140" cy="88" r="3" fill="#3a1c2a" opacity="0.5"/>
-185|      <circle cx="50" cy="105" r="2.5" fill="#3a1c2a" opacity="0.5"/>
-186|      <circle cx="90" cy="105" r="2" fill="#3a1c2a" opacity="0.5"/>
-187|      <circle cx="130" cy="105" r="2.5" fill="#3a1c2a" opacity="0.5"/>
-188|    </svg>
-189|  </div>
-190|  <p class="jaguar-reveal" id="jaguar-reveal">Golden eyes in the undergrowth. A jaguar doesn't announce itself — it simply is, fierce and quiet, moving through shadow like it owns the night. You know that energy. Feisty doesn't mean loud. It means unstoppable.</p>
-191|  <button class="next-btn" id="jaguar-next" onclick="goToSection('monaco')">Continue</button>
-192|</section>
-193|
-194|<section class="section" id="monaco">
-195|  <svg class="monaco-skyline" viewBox="0 0 1200 120" preserveAspectRatio="none">
-196|    <path d="M0,120 L0,80 L40,80 L40,60 L80,60 L80,70 L120,70 L120,50 L160,50 L160,65 L200,65 L200,40 L240,40 L240,55 L280,55 L280,45 L320,45 L320,70 L360,70 L360,50 L400,50 L400,60 L440,60 L440,35 L480,35 L480,55 L520,55 L520,65 L560,65 L560,45 L600,45 L600,55 L640,55 L640,40 L680,40 L680,60 L720,60 L720,50 L760,50 L760,65 L800,65 L800,45 L840,45 L840,55 L880,55 L880,70 L920,70 L920,50 L960,50 L960,60 L1000,60 L1000,45 L1040,45 L1040,65 L1080,65 L1080,55 L1120,55 L1120,70 L1160,70 L1160,80 L1200,80 L1200,120 Z" fill="rgba(255,255,255,0.5)"/>
-197|  </svg>
-198|  <h2>Monaco</h2>
-199|  <p class="instruction">Match each luxury to its word</p>
-200|  <div class="memory-grid" id="memory-grid"></div>
-201|  <p class="match-counter" id="match-counter">0 of 5 matched</p>
-202|  <p class="monaco-reveal" id="monaco-reveal">Sunlight on turquoise water. The clink of crystal, the scent of jasmine on warm wind — Monaco holds the kind of luxury that doesn't shout. It whispers, and you lean in to listen. Some memories are meant to be savored slowly.</p>
-203|  <button class="next-btn" id="monaco-next" onclick="goToSection('autumn')">Continue</button>
-204|</section>
-205|
-206|<section class="section" id="autumn">
-207|  <h2>The Autumn Path</h2>
-208|  <p class="instruction">Catch the falling leaves — each carries a wish</p>
-209|  <p class="leaf-counter" id="leaf-counter">0 of 6 caught</p>
-210|  <div id="leaf-container"></div>
-211|  <div class="leaf-message" id="leaf-message"></div>
-212|  <p class="autumn-reveal" id="autumn-reveal">Leaves falling like confetti in amber and rust. Autumn doesn't choose between sweet and savory — it gives you both, crisp apples and roasted chestnuts, endings and beginnings tangled together. This path holds a little of each.</p>
-213|  <button class="next-btn" id="autumn-next" onclick="goToSection('reveal')">Continue</button>
-214|</section>
-215|
-216|<section class="section" id="reveal">
-217|  <div class="reveal-content">
-218|    <svg class="grad-cap" id="grad-cap" viewBox="0 0 80 80" fill="none">
-219|      <path d="M40 15 L75 30 L40 45 L5 30 Z" fill="#9b2d4e"/>
-220|      <path d="M15 35 L15 50 Q40 62 65 50 L65 35" stroke="#9b2d4e" stroke-width="3" fill="none"/>
-221|      <line x1="75" y1="30" x2="75" y2="50" stroke="#c9a96e" stroke-width="2"/>
-222|      <circle cx="75" cy="52" r="4" fill="#c9a96e"/>
-223|      <path d="M73 52 Q71 58 70 62" stroke="#c9a96e" stroke-width="1.5" fill="none"/>
-224|    </svg>
-225|    <h1 id="reveal-title">Congratulations, Sev</h1>
-226|    <p class="grad-message" id="reveal-message">Sev, you did it. Not because the path was easy, but because you refused to quit — <em>feisty</em>, focused, moving to your own rhythm like that MJ bassline that never stops driving forward. The garden you've planted is just beginning to show its colors, and every rose, every golden leaf, every quiet roar of that jaguar spirit is yours. Congratulations, graduate. The world better get ready — you're only getting started.</p>
-227|    <p class="signature" id="reveal-signature">With love, your friend</p>
-228|    <button class="audio-btn" id="audio-btn" onclick="playGroove()">Play Celebration</button>
-229|  </div>
-230|</section>
-231|
-232|</div>
-233|<script>
-234|var state={currentSection:0,sections:['dawn','garden','jaguar','monaco','autumn','reveal'],rosesPlanted:0,jaguarRevealed:false,monacoMatched:0,leavesCaught:0,flippedCards:[],leafSpawnInterval:null,audioCtx:null};
-235|
-236|function goToSection(id){
-237|  var idx=state.sections.indexOf(id);if(idx===-1)return;
-238|  state.currentSection=idx;
-239|  var secs=document.querySelectorAll('.section');
-240|  for(var i=0;i<secs.length;i++)secs[i].classList.remove('active');
-241|  document.getElementById(id).classList.add('active');
-242|  var pct=(idx/(state.sections.length-1))*100;
-243|  document.getElementById('progress-bar').style.width=pct+'%';
-244|  var dots=document.querySelectorAll('.petal-dot');
-245|  for(var j=0;j<dots.length;j++)dots[j].classList.toggle('active',j<=idx);
-246|  window.scrollTo(0,0);
-247|  if(id==='monaco'&&!document.getElementById('memory-grid').children.length)initMemoryGame();
-248|  if(id==='autumn'&&!state.leafSpawnInterval)startLeaves();
-249|  if(id==='reveal')triggerReveal();
-250|}
-251|
-252|function enterGarden(){
-253|  document.getElementById('progress').classList.add('active');
-254|  document.getElementById('progress-labels').classList.add('active');
-255|  goToSection('garden');
-256|}
-257|
-258|window.addEventListener('load',function(){createParticles();});
-259|
-260|function createParticles(){
-261|  var dawn=document.getElementById('dawn');
-262|  for(var i=0;i<20;i++){
-263|    var p=document.createElement('div');p.className='particle';
-264|    p.style.left=Math.random()*100+'%';p.style.top=Math.random()*100+'%';
-265|    p.style.opacity=Math.random()*0.5+0.2;
-266|    p.style.animation='particleFloat '+(Math.random()*6+4)+'s ease-in-out '+(Math.random()*2)+'s infinite alternate';
-267|    dawn.appendChild(p);
-268|  }
-269|}
-270|
-271|
-function playChime(freq, dur) {
-  if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  var ctx = state.audioCtx;
-  if (ctx.state === 'suspended') ctx.resume();
-  var osc = ctx.createOscillator();
-  var gain = ctx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(freq, ctx.currentTime);
-  gain.gain.setValueAtTime(0.12, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start();
-  osc.stop(ctx.currentTime + dur);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>For Sev</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS — brief §3 ============ */
+:root {
+  --c-night:    #241024;
+  --c-dusk:     #3d1a3a;
+  --c-mulberry: #5e2347;
+  --c-rose-dp:  #9b2d4e;
+  --c-rose:     #b5546e;
+  --c-coral:    #e08a7d;
+  --c-peach:    #f2b48a;
+  --c-gold:     #f7d49b;
+  --c-cream:    #fdf2ec;
+  --ink:        #3a1c2a;
+  --warm-white: #fff6f0;
+  --stem:       #6e7d54;
+  --dawn: 0;
 }
 
-function spawnPollen(x, y) {
-  for (var i = 0; i < 8; i++) {
-    var p = document.createElement('div');
-    p.className = 'pollen';
-    var angle = (i / 8) * Math.PI * 2;
-    var dist = 25 + Math.random() * 20;
-    p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-    p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-    p.style.left = x + 'px';
-    p.style.top = y + 'px';
-    p.style.position = 'fixed';
-    document.body.appendChild(p);
-    (function(particle) { setTimeout(function() { particle.remove(); }, 800); })(p);
+@property --dawn {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+/* ============ BASE ============ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 300;
+  background: var(--c-night);
+  color: var(--warm-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+/* ============ SKY: fixed night gradient (never changes) ============ */
+.sky {
+  position: fixed; inset: 0; z-index: 0;
+  background: linear-gradient(180deg,
+    var(--c-night) 0%,
+    var(--c-dusk) 30%,
+    var(--c-mulberry) 60%,
+    #6b2a52 85%,
+    var(--c-rose) 100%);
+}
+
+/* ============ WARM OVERLAY: the sunrise ============ */
+.warm {
+  position: fixed; inset: 0; z-index: 1;
+  pointer-events: none;
+  opacity: var(--dawn);
+  background:
+    radial-gradient(60% 35% at 50% 55%,
+      rgba(255, 250, 230, 1) 0%,
+      rgba(247, 212, 155, 0.8) 25%,
+      transparent 60%),
+    radial-gradient(100% 60% at 50% 60%,
+      rgba(247, 212, 155, 0.6) 0%,
+      transparent 70%),
+    radial-gradient(120% 80% at 50% 40%,
+      rgba(242, 180, 138, 0.4) 0%,
+      transparent 65%),
+    linear-gradient(180deg,
+      #8a3a5e 0%,
+      var(--c-rose) 20%,
+      var(--c-coral) 50%,
+      var(--c-peach) 80%,
+      var(--c-gold) 100%);
+}
+
+/* ============ STARS (fade as dawn rises) ============ */
+.stars {
+  position: fixed; inset: 0; z-index: 2;
+  pointer-events: none;
+  opacity: calc(1 - var(--dawn));
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--warm-white);
+  box-shadow: 0 0 3px rgba(255, 246, 240, 0.6);
+}
+
+/* ============ JAGUAR CONSTELLATION (faint, in the night sky) ============ */
+.constellation {
+  position: fixed; inset: 0; z-index: 2;
+  pointer-events: none;
+  opacity: calc((1 - var(--dawn)) * 0.7);
+}
+.constellation svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.constellation .star-dot {
+  fill: var(--warm-white);
+}
+.constellation .star-line {
+  stroke: var(--warm-white);
+  stroke-width: 0.5;
+  fill: none;
+  opacity: 0.3;
+}
+
+/* ============ SUN (rises from below horizon) ============ */
+.sun {
+  position: fixed;
+  left: 50%;
+  top: 55%;
+  width: 360px;
+  height: 360px;
+  margin-left: -180px;
+  margin-top: -180px;
+  z-index: 3;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle,
+    rgba(255, 252, 240, 1) 0%,
+    rgba(255, 235, 190, 0.95) 25%,
+    rgba(247, 212, 155, 0.7) 45%,
+    rgba(242, 180, 138, 0.35) 65%,
+    transparent 85%);
+  filter: blur(3px);
+  transform: translateY(calc(60vh * (1 - var(--dawn))));
+  opacity: calc(0.15 + 0.85 * var(--dawn));
+}
+
+/* ============ HORIZON ROSES (simple bezier petals) ============ */
+.horizon-roses {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 40%;
+  z-index: 4;
+  pointer-events: none;
+}
+.horizon-rose {
+  position: absolute;
+  bottom: 6%;
+  width: 160px;
+  height: 160px;
+  transform: translateX(-50%);
+  opacity: clamp(0, calc((var(--dawn) - var(--start-dawn)) / 0.15), 1);
+}
+.horizon-rose svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.horizon-rose .rose-path {
+  fill: var(--c-rose-dp);
+  fill-opacity: 0.5;
+  stroke: var(--c-night);
+  stroke-width: 0.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: var(--len);
+  stroke-dashoffset: var(--len);
+  transition: stroke-dashoffset 2.5s cubic-bezier(0.22, 1, 0.36, 1), fill-opacity 2s ease 1s;
+}
+.horizon-rose.bloomed .rose-path {
+  stroke-dashoffset: 0;
+  fill-opacity: 0.6;
+}
+.horizon-rose .rose-center {
+  fill: var(--c-night);
+  opacity: 0;
+  transition: opacity 1.2s ease 1.2s;
+}
+.horizon-rose.bloomed .rose-center {
+  opacity: 0.7;
+}
+
+/* ============ TEXT LAYER (prompts + message) ============ */
+.text-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  pointer-events: none;
+  text-align: center;
+  padding: 2rem;
+}
+.text-layer > * {
+  pointer-events: auto;
+}
+
+.name {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(5rem, 16vw, 11rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--warm-white);
+  white-space: nowrap;
+  opacity: 0;
+  filter: blur(16px);
+  text-shadow: 0 0 60px rgba(247, 212, 155, calc(var(--dawn) * 0.3));
+  pointer-events: none;
+  animation: nameIn 2.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+}
+@keyframes nameIn {
+  0% { opacity: 0; filter: blur(16px); transform: translate(-50%, -50%); }
+  100% { opacity: 1; filter: blur(0); transform: translate(-50%, -50%); }
+}
+/* As --dawn rises, the name blurs out and fades */
+.name {
+  filter: blur(calc(18px * var(--dawn)));
+  opacity: calc(1 - var(--dawn) * 0.4);
+}
+
+/* ============ BLUR-IN PROMPTS ============ */
+.prompt {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  letter-spacing: 0.02em;
+  color: var(--warm-white);
+  opacity: 0;
+  filter: blur(14px);
+  transform: translateY(18px);
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  transform: translate(-50%, 18px);
+  white-space: nowrap;
+  text-shadow: 0 0 30px rgba(36, 16, 36, 0.6);
+}
+.prompt.show {
+  animation: blurIn 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.prompt.fade-out {
+  animation: blurOut 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes blurIn {
+  0% { opacity: 0; filter: blur(14px); transform: translate(-50%, 18px); }
+  100% { opacity: 1; filter: blur(0); transform: translate(-50%, 0); }
+}
+@keyframes blurOut {
+  0% { opacity: 1; filter: blur(0); transform: translate(-50%, 0); }
+  100% { opacity: 0; filter: blur(10px); transform: translate(-50%, -10px); }
+}
+
+/* ============ FINAL MESSAGE ============ */
+.message-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: min(38ch, 90vw);
+  text-align: center;
+  opacity: 0;
+  filter: blur(20px);
+}
+.message-container.show {
+  animation: messageIn 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes messageIn {
+  0% { opacity: 0; filter: blur(20px); }
+  100% { opacity: 1; filter: blur(0); }
+}
+.message {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: clamp(1rem, 2.2vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--ink);
+  margin: 0;
+}
+.message em {
+  font-style: italic;
+  color: var(--c-rose-dp);
+}
+
+/* ============ A11Y: SR-only ============ */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+:focus-visible {
+  outline: 2px solid var(--c-gold);
+  outline-offset: 4px;
+}
+
+/* ============ REDUCED MOTION ============ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.4s !important;
   }
 }
+</style>
+</head>
+<body>
 
-function plantRose(e){
-272|  if(state.rosesPlanted>=3)return;
-273|  var canvas=document.getElementById('garden-canvas');
-274|  var rect=canvas.getBoundingClientRect();
-275|  var x=e.clientX-rect.left-30;var y=e.clientY-rect.top-30;
-276|  var rose=document.createElement('div');rose.className='planted-rose';
-277|  rose.style.left=x+'px';rose.style.top=y+'px';
-278|  rose.innerHTML=createRoseSVG();canvas.appendChild(rose);
-279|  state.rosesPlanted++;
-280|  document.getElementById('garden-counter').textContent=state.rosesPlanted+' of 3 planted';
-281|  if(state.rosesPlanted>=3){
-282|    setTimeout(function(){
-283|      document.getElementById('garden-reveal').classList.add('reveal-show');
-284|      document.getElementById('garden-next').classList.add('visible');
-285|    },1000);
-286|  }
-287|}
-288|
-289|function createRoseSVG(){
-290|  var colors=[{outer:'#c44569',mid:'#e8628a',inner:'#f4a4b8'},{outer:'#d44569',mid:'#e87090',inner:'#f8b0c0'},{outer:'#b03560',mid:'#d4557a',inner:'#e890a8'}];
-291|  var c=colors[Math.floor(Math.random()*colors.length)];
-292|  var rot=Math.random()*360;
-293|  return '<svg class="rose-svg" viewBox="0 0 60 60" style="transform:rotate('+rot+'deg)">'+
-294|    '<path d="M30 55 L30 38" stroke="#4a7c3a" stroke-width="2" fill="none"/>'+
-295|    '<ellipse cx="24" cy="45" rx="5" ry="3" fill="#4a7c3a" transform="rotate(-30 24 45)"/>'+
-296|    '<ellipse cx="36" cy="48" rx="5" ry="3" fill="#5a8c4a" transform="rotate(30 36 48)"/>'+
-297|    '<ellipse cx="30" cy="25" rx="16" ry="15" fill="'+c.outer+'" opacity="0.85"/>'+
-298|    '<ellipse cx="26" cy="22" rx="11" ry="10" fill="'+c.mid+'" opacity="0.9"/>'+
-299|    '<ellipse cx="34" cy="26" rx="10" ry="9" fill="'+c.mid+'" opacity="0.9"/>'+
-300|    '<ellipse cx="30" cy="23" rx="7" ry="6" fill="'+c.inner+'" opacity="0.95"/>'+
-301|    '<circle cx="30" cy="23" r="3" fill="'+c.outer+'" opacity="0.7"/>'+
-302|    '<path d="M22 18 Q26 14 30 16 Q28 20 22 18" fill="'+c.inner+'" opacity="0.4"/>'+
-303|    '</svg>';
-304|}
-305|
-306|function revealJaguar(){
-307|  if(state.jaguarRevealed)return;state.jaguarRevealed=true;
-308|  var eyes=document.getElementById('jaguar-eyes');
-309|  eyes.style.opacity='0';eyes.style.transform='scale(0.5)';
-310|  var inst=document.getElementById('jaguar-instruction');inst.style.opacity='0';
-311|  setTimeout(function(){
-312|    eyes.style.display='none';
-313|    document.getElementById('jaguar-svg-container').classList.add('revealed');
-314|    setTimeout(function(){
-315|      document.getElementById('jaguar-reveal').classList.add('reveal-show');
-316|      document.getElementById('jaguar-next').classList.add('visible');
-317|    },1200);
-318|  },800);
-319|}
-320|
-321|var memoryPairs=[
-322|  {item:'Cartier Watch',word:'Timeless',id:0},
-323|  {item:'Silk Scarf',word:'Grace',id:1},
-324|  {item:'Casino Chip',word:'Fortune',id:2},
-325|  {item:'Chateau Yquem',word:'Golden',id:3},
-326|  {item:'Driving Gloves',word:'Control',id:4}
-327|];
-328|
-329|function initMemoryGame(){
-330|  var grid=document.getElementById('memory-grid');var cards=[];
-331|  memoryPairs.forEach(function(p){cards.push(Object.assign({},p,{type:'item'}));cards.push(Object.assign({},p,{type:'word'}));});
-332|  cards.sort(function(){return Math.random()-0.5;});
-333|  cards.forEach(function(card){
-334|    var el=document.createElement('div');el.className='memory-card';
-335|    el.dataset.id=card.id;el.dataset.type=card.type;
-336|    el.onclick=function(){flipCard(el);};
-337|    el.innerHTML='<div class="card-inner"><div class="card-face card-front"></div><div class="card-face card-back"><span class="item-text">'+(card.type==='item'?card.item:card.word)+'</span></div></div>';
-338|    grid.appendChild(el);
-339|  });
-340|}
-341|
-342|function flipCard(card){
-343|  if(card.classList.contains('flipped')||card.classList.contains('matched'))return;
-344|  if(state.flippedCards.length>=2)return;
-345|  card.classList.add('flipped');state.flippedCards.push(card);
-346|  if(state.flippedCards.length===2)setTimeout(checkMatch,800);
-347|}
-348|
-349|function checkMatch(){
-350|  var a=state.flippedCards[0],b=state.flippedCards[1];
-351|  if(a.dataset.id===b.dataset.id&&a.dataset.type!==b.dataset.type){
-352|    a.classList.add('matched');b.classList.add('matched');state.monacoMatched++;playChime(523 + state.monacoMatched * 50, 0.2);
-353|    document.getElementById('match-counter').textContent=state.monacoMatched+' of 5 matched';
-354|    if(state.monacoMatched>=5){
-355|      setTimeout(function(){
-356|        document.getElementById('monaco-reveal').classList.add('reveal-show');
-357|        document.getElementById('monaco-next').classList.add('visible');
-358|      },800);
-359|    }
-360|  }else{a.classList.remove('flipped');b.classList.remove('flipped');}
-361|  state.flippedCards=[];
-362|}
-363|
-364|var leafMessages=['May your roots go deep and your branches reach fearless toward the light.','The sweetest victories are the ones you fought for.','Autumn teaches us that letting go can be breathtakingly beautiful.','Stay sharp, stay soft — the world needs both of you.','Every ending is a threshold. Step through.','You were made for more than surviving. You were made for blooming.'];
-365|var leafColors=['#d4742a','#c4651a','#b85520','#a04525','#e8852a','#cc7028'];
-366|
-367|function createLeafSVG(color){
-368|  return '<svg viewBox="0 0 36 36" width="36" height="36"><path d="M18 4 Q28 8 30 18 Q28 28 18 32 Q8 28 6 18 Q8 8 18 4 Z" fill="'+color+'" opacity="0.85"/><path d="M18 6 L18 30" stroke="rgba(0,0,0,0.2)" stroke-width="1" fill="none"/><path d="M18 12 L12 8 M18 12 L24 8 M18 20 L10 16 M18 20 L26 16 M18 26 L14 22 M18 26 L22 22" stroke="rgba(0,0,0,0.15)" stroke-width="0.5" fill="none"/></svg>';
-369|}
-370|
-371|function startLeaves(){
-372|  spawnLeaf();
-373|  state.leafSpawnInterval=setInterval(function(){
-374|    if(state.leavesCaught<6)spawnLeaf();else clearInterval(state.leafSpawnInterval);
-375|  },2500);
-376|}
-377|
-378|function spawnLeaf(){
-379|  if(state.leavesCaught>=6)return;
-380|  var autumn=document.getElementById('autumn');
-381|  var leaf=document.createElement('div');leaf.className='falling-leaf';
-382|  leaf.style.left=Math.random()*80+10+'%';leaf.style.top='-50px';
-383|  leaf.style.animationDuration=(Math.random()*4+6)+'s';
-384|  leaf.innerHTML=createLeafSVG(leafColors[Math.floor(Math.random()*leafColors.length)]);
-385|  leaf.onclick=function(){catchLeaf(leaf);};
-386|  autumn.appendChild(leaf);
-387|  setTimeout(function(){if(leaf.parentNode)leaf.remove();},12000);
-388|}
-389|
-390|function catchLeaf(leaf){
-391|  if(leaf.classList.contains('caught'))return;
-392|  leaf.classList.add('caught');playChime(440 + msgIdx * 60, 0.2);
-393|  var msgIdx=state.leavesCaught;state.leavesCaught++;
-394|  document.getElementById('leaf-counter').textContent=state.leavesCaught+' of 6 caught';
-395|  var msgEl=document.getElementById('leaf-message');
-396|  msgEl.textContent=leafMessages[msgIdx];
-397|  msgEl.classList.remove('show');void msgEl.offsetWidth;msgEl.classList.add('show');
-398|  setTimeout(function(){leaf.remove();},800);
-399|  if(state.leavesCaught>=6){
-400|    clearInterval(state.leafSpawnInterval);
-401|    setTimeout(function(){
-402|      document.getElementById('autumn-reveal').classList.add('reveal-show');
-403|      document.getElementById('autumn-next').classList.add('visible');
-404|    },3000);
-405|  }
-406|}
-407|
-408|function triggerReveal(){
-409|  setTimeout(function(){var el=document.getElementById('grad-cap');el.style.opacity='1';el.style.transform='translateY(0)';},500);
-410|  setTimeout(function(){var el=document.getElementById('reveal-title');el.style.opacity='1';el.style.transform='translateY(0)';},1200);
-411|  setTimeout(function(){var el=document.getElementById('reveal-message');el.style.opacity='1';el.style.transform='translateY(0)';},2000);
-412|  setTimeout(function(){document.getElementById('reveal-signature').style.opacity='1';},3000);
-413|  setTimeout(function(){document.getElementById('audio-btn').style.opacity='1';},3500);
-414|  setTimeout(startPetalConfetti,1500);
-415|}
-416|
-417|function startPetalConfetti(){
-418|  var colors=['#c44569','#e8628a','#f4a4b8','#c9a96e','#d4a574','#f5c9a8'];
-419|  for(var i=0;i<40;i++){
-420|    (function(idx){
-421|      setTimeout(function(){
-422|        var petal=document.createElement('div');petal.className='petal-confetti';
-423|        petal.style.left=Math.random()*100+'%';petal.style.top='-20px';
-424|        petal.style.width=(Math.random()*12+8)+'px';petal.style.height=(Math.random()*10+8)+'px';
-425|        petal.style.background=colors[Math.floor(Math.random()*colors.length)];
-426|        petal.style.borderRadius='50% 0 50% 50%';petal.style.opacity=Math.random()*0.4+0.4;
-427|        petal.style.transform='rotate('+Math.random()*360+'deg)';
-428|        petal.style.transition='transform '+(Math.random()*3+3)+'s linear, opacity '+(Math.random()*3+3)+'s linear';
-429|        document.body.appendChild(petal);
-430|        requestAnimationFrame(function(){
-431|          petal.style.transform='translateY('+(window.innerHeight+100)+'px) translateX('+((Math.random()-0.5)*200)+'px) rotate('+(Math.random()*720)+'deg)';
-432|          setTimeout(function(){petal.remove();},6000);
-433|        });
-434|      },idx*80);
-435|    })(i);
-436|  }
-437|}
-438|
-439|
-var feistyBuffer = '';
-document.addEventListener('keydown', function(e) {
-  if (e.key.length === 1) {
-    feistyBuffer = (feistyBuffer + e.key.toLowerCase()).slice(-6);
-    if (feistyBuffer === 'feisty') {
-      triggerFeistyEgg();
-      feistyBuffer = '';
+<div class="sky"></div>
+<div class="warm"></div>
+<div class="stars" id="stars"></div>
+<div class="constellation" id="constellation"></div>
+<div class="sun"></div>
+<div class="horizon-roses" id="horizon-roses"></div>
+
+<div class="text-layer">
+  <h1 class="name" id="name">Sev</h1>
+  <p class="prompt" id="prompt-hold">hold.</p>
+  <p class="prompt" id="prompt-again">again.</p>
+  <div class="message-container" id="message-container">
+    <!-- UMAR: replace this entire block with your real words to Sev.
+         One specific shared memory beats ten metaphors. Keep it short.
+         Do NOT let any model fill this in. -->
+    <p class="message" id="umar-message">[ YOUR MESSAGE GOES HERE ]</p>
+  </div>
+</div>
+
+<div id="announcer" aria-live="polite" class="sr-only"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ============ THE SUNRISE ENGINE ============
+  // The whole site is one scene, one variable: --dawn (0 → 1)
+  // Three hold interactions drive it forward. No counters. No continue buttons.
+
+  const root = document.documentElement;
+  let dawn = 0;
+  let stage = 0; // 0=night, 1=warming, 2=roses, 3=final
+  let isHolding = false;
+  let holdStart = 0;
+  let holdFromDawn = 0;
+  let audioCtx = null;
+  let grooveStarted = false;
+  const STAGE_TARGETS = [0, 0.35, 0.65, 1.0];
+
+  function setDawn(v) {
+    dawn = Math.max(0, Math.min(1, v));
+    root.style.setProperty('--dawn', dawn);
+    // Trigger rose bloom
+    document.querySelectorAll('.horizon-rose').forEach(rose => {
+      const start = parseFloat(rose.style.getPropertyValue('--start-dawn'));
+      if (dawn >= start + 0.05) {
+        rose.classList.add('bloomed');
+      }
+    });
+    // Stage transitions
+    checkStage();
+  }
+
+  function checkStage() {
+    // Stage 0 → 1: dawn reaches stage 1 target, show "hold." if not already
+    if (stage === 0 && dawn >= 0.05) {
+      stage = 1;
+      showPrompt('prompt-hold');
+      announce('Hold to let the light in');
+    }
+    // Stage 1 → 2: dawn reaches stage 2 target, "hold." fades, "again." appears
+    if (stage === 1 && dawn >= 0.35) {
+      stage = 2;
+      fadePrompt('prompt-hold');
+      setTimeout(() => showPrompt('prompt-again'), 800);
+      announce('Wake the roses');
+    }
+    // Stage 2 → 3: dawn reaches stage 3 target, "again." fades, final reveal
+    if (stage === 2 && dawn >= 0.65) {
+      stage = 3;
+      fadePrompt('prompt-again');
+      setTimeout(() => {
+        document.getElementById('message-container').classList.add('show');
+        announce('Message revealed');
+      }, 1000);
+      if (!grooveStarted) {
+        grooveStarted = true;
+        startBasslineFade();
+      }
     }
   }
-});
 
-function triggerFeistyEgg() {
-  var msg = document.getElementById('feisty-msg');
-  msg.textContent = 'Feisty';
-  msg.classList.add('show');
-  playChime(880, 0.3);
-  setTimeout(function() { playChime(1100, 0.3); }, 150);
-  for (var i = 0; i < 30; i++) {
-    (function(idx) {
-      setTimeout(function() {
-        var burst = document.createElement('div');
-        burst.className = 'feisty-burst';
-        burst.style.left = '50%';
-        burst.style.top = '50%';
-        var angle = (idx / 30) * Math.PI * 2;
-        var dist = 150 + Math.random() * 200;
-        burst.style.setProperty('--bx', Math.cos(angle) * dist + 'px');
-        burst.style.setProperty('--by', Math.sin(angle) * dist + 'px');
-        document.body.appendChild(burst);
-        setTimeout(function() { burst.remove(); }, 1200);
-      }, idx * 20);
-    })(i);
+  function showPrompt(id) {
+    const el = document.getElementById(id);
+    el.classList.remove('fade-out');
+    el.classList.add('show');
   }
-  setTimeout(function() { msg.classList.remove('show'); }, 2500);
-}
+  function fadePrompt(id) {
+    const el = document.getElementById(id);
+    el.classList.remove('show');
+    el.classList.add('fade-out');
+  }
+  function announce(msg) {
+    const a = document.getElementById('announcer');
+    a.textContent = msg;
+  }
 
-function playGroove(){
-440|  if(!state.audioCtx)state.audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-441|  var ctx=state.audioCtx;if(ctx.state==='suspended')ctx.resume();
-442|  var bpm=116;var beat=60/bpm;var bars=8;
-443|  var bassPattern=[{note:65.41,time:0},{note:65.41,time:beat*0.5},{note:49.00,time:beat*1},{note:65.41,time:beat*1.5},{note:77.78,time:beat*2},{note:65.41,time:beat*2.5},{note:49.00,time:beat*3},{note:58.27,time:beat*3.5}];
-444|  var now=ctx.currentTime;
-445|  for(var bar=0;bar<bars;bar++){
-446|    var barStart=now+bar*beat*4;
-447|    bassPattern.forEach(function(bp){
-448|      var osc=ctx.createOscillator();var gain=ctx.createGain();var t=barStart+bp.time;
-449|      osc.type='sawtooth';osc.frequency.value=bp.note;
-450|      var filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=600;filter.Q.value=8;
-451|      gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(0.15,t+0.01);gain.gain.exponentialRampToValueAtTime(0.001,t+beat*0.4);
-452|      osc.connect(filter);filter.connect(gain);gain.connect(ctx.destination);
-453|      osc.start(t);osc.stop(t+beat*0.5);
-454|    });
-455|    for(var h=0;h<8;h++){
-456|      var t=barStart+h*beat*0.5+beat*0.25;
-457|      var noise=ctx.createBufferSource();
-458|      var buf=ctx.createBuffer(1,2048,ctx.sampleRate);
-459|      var data=buf.getChannelData(0);
-460|      for(var ii=0;ii<2048;ii++)data[ii]=Math.random()*2-1;
-461|      noise.buffer=buf;
-462|      var hpf=ctx.createBiquadFilter();hpf.type='highpass';hpf.frequency.value=8000;
-463|      var hgain=ctx.createGain();hgain.gain.setValueAtTime(0.03,t);hgain.gain.exponentialRampToValueAtTime(0.001,t+0.05);
-464|      noise.connect(hpf);hpf.connect(hgain);hgain.connect(ctx.destination);
-465|      noise.start(t);noise.stop(t+0.05);
-466|    }
-467|    [0,2].forEach(function(beatNum){
-468|      var t=barStart+beatNum*beat;
-469|      var osc=ctx.createOscillator();var gain=ctx.createGain();
-470|      osc.frequency.setValueAtTime(150,t);osc.frequency.exponentialRampToValueAtTime(40,t+0.1);
-471|      gain.gain.setValueAtTime(0.2,t);gain.gain.exponentialRampToValueAtTime(0.001,t+0.15);
-472|      osc.connect(gain);gain.connect(ctx.destination);
-473|      osc.start(t);osc.stop(t+0.15);
-474|    });
-475|  }
-476|  var btn=document.getElementById('audio-btn');btn.textContent='Playing...';btn.disabled=true;
-477|  setTimeout(function(){btn.textContent='Play Again';btn.disabled=false;},bars*beat*4*1000);
-478|}
-479|</script>
-480|</body>
-481|</html>
+  // ============ HOLD INTERACTION ============
+  function onHoldStart(e) {
+    if (e) e.preventDefault();
+    if (stage >= 3) return;
+    isHolding = true;
+    holdStart = performance.now();
+    holdFromDawn = dawn;
+    tick();
+  }
+  function onHoldEnd(e) {
+    if (e) e.preventDefault();
+    isHolding = false;
+  }
+  function tick() {
+    if (!isHolding) return;
+    const elapsed = (performance.now() - holdStart) / 1000;
+    // Rise rate: 0.15 per second of holding
+    const rise = elapsed * 0.15;
+    const target = holdFromDawn + rise;
+    const stageCeiling = STAGE_TARGETS[stage] || 1.0;
+    setDawn(Math.min(target, stageCeiling));
+    if (dawn < stageCeiling) {
+      requestAnimationFrame(tick);
+    } else {
+      isHolding = false;
+    }
+  }
+
+  // ============ STARS (procedural) ============
+  (function generateStars() {
+    const container = document.getElementById('stars');
+    const count = 110;
+    for (let i = 0; i < count; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      s.style.left = Math.random() * 100 + '%';
+      s.style.top = (Math.random() * 60) + '%';
+      const size = 0.6 + Math.random() * 1.8;
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.opacity = 0.25 + Math.random() * 0.7;
+      container.appendChild(s);
+    }
+  })();
+
+  // ============ JAGUAR CONSTELLATION ============
+  // Faint points connected by lines, forming a jaguar silhouette in the upper sky.
+  (function generateConstellation() {
+    const container = document.getElementById('constellation');
+    // Jaguar points (in % of viewport, upper portion)
+    const points = [
+      { x: 18, y: 22 }, // nose tip
+      { x: 22, y: 18 }, // ear
+      { x: 28, y: 20 }, // ear
+      { x: 32, y: 24 }, // forehead
+      { x: 38, y: 28 }, // shoulder
+      { x: 44, y: 32 }, // back
+      { x: 48, y: 38 }, // hind
+      { x: 44, y: 44 }, // rear leg
+      { x: 36, y: 42 }, // belly
+      { x: 28, y: 40 }, // chest
+      { x: 24, y: 36 }, // front leg
+      { x: 20, y: 32 }, // front leg
+    ];
+    // Lines between consecutive points + eyes
+    const lines = [
+      [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7],
+      [7, 8], [8, 9], [9, 10], [10, 11], [11, 0],
+      // Eyes (inner face)
+      [0, 12], [12, 13]
+    ];
+    // Eye positions
+    const eyes = [{ x: 20, y: 26 }, { x: 26, y: 26 }];
+    let svg = '<svg viewBox="0 0 100 100" preserveAspectRatio="none">';
+    // Lines
+    lines.forEach(([a, b]) => {
+      const pa = a < 12 ? points[a] : eyes[a - 12];
+      const pb = b < 12 ? points[b] : eyes[b - 12];
+      svg += '<line class="star-line" x1="' + pa.x + '" y1="' + pa.y + '" x2="' + pb.x + '" y2="' + pb.y + '"/>';
+    });
+    // Points
+    points.forEach(p => {
+      svg += '<circle class="star-dot" cx="' + p.x + '" cy="' + p.y + '" r="0.4"/>';
+    });
+    // Eyes (brighter)
+    eyes.forEach(p => {
+      svg += '<circle class="star-dot" cx="' + p.x + '" cy="' + p.y + '" r="0.5" opacity="0.9"/>';
+    });
+    svg += '</svg>';
+    container.innerHTML = svg;
+  })();
+
+  // ============ HORIZON ROSES (simple bezier petals) ============
+  function buildRosePath(k, scale) {
+    const cx = 50, cy = 50;
+    const petals = [];
+    for (let i = 0; i < k; i++) {
+      const angle = (i / k) * Math.PI * 2 - Math.PI / 2;
+      const tipX = cx + Math.cos(angle) * scale;
+      const tipY = cy + Math.sin(angle) * scale;
+      const cpDist = scale * 0.6;
+      const perp = angle + Math.PI / 2;
+      const cp1X = cx + Math.cos(angle) * scale * 0.4 + Math.cos(perp) * cpDist * 0.7;
+      const cp1Y = cy + Math.sin(angle) * scale * 0.4 + Math.sin(perp) * cpDist * 0.7;
+      const cp2X = cx + Math.cos(angle) * scale * 0.4 - Math.cos(perp) * cpDist * 0.7;
+      const cp2Y = cy + Math.sin(angle) * scale * 0.4 - Math.sin(perp) * cpDist * 0.7;
+      petals.push('M' + cx + ',' + cy +
+        ' Q' + cp1X.toFixed(1) + ',' + cp1Y.toFixed(1) + ' ' + tipX.toFixed(1) + ',' + tipY.toFixed(1) +
+        ' Q' + cp2X.toFixed(1) + ',' + cp2Y.toFixed(1) + ' ' + cx + ',' + cy + ' Z');
+    }
+    return petals.join(' ');
+  }
+
+  (function generateRoses() {
+    const container = document.getElementById('horizon-roses');
+    const positions = [
+      { x: 12,  scale: 28, k: 5, start: 0.20 },
+      { x: 25,  scale: 34, k: 4, start: 0.28 },
+      { x: 38,  scale: 30, k: 6, start: 0.35 },
+      { x: 50,  scale: 40, k: 5, start: 0.42 },
+      { x: 62,  scale: 30, k: 4, start: 0.50 },
+      { x: 75,  scale: 34, k: 5, start: 0.58 },
+      { x: 88,  scale: 28, k: 6, start: 0.65 }
+    ];
+    positions.forEach(p => {
+      const wrap = document.createElement('div');
+      wrap.className = 'horizon-rose';
+      wrap.style.left = p.x + '%';
+      wrap.style.setProperty('--start-dawn', p.start);
+      const path = buildRosePath(p.k, p.scale);
+      const approxLen = p.scale * p.k * 4;
+      wrap.style.setProperty('--len', approxLen);
+      wrap.innerHTML = '<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">' +
+        '<path class="rose-path" d="' + path + '"/>' +
+        '<circle class="rose-center" cx="50" cy="50" r="3"/>' +
+        '</svg>';
+      container.appendChild(wrap);
+    });
+  })();
+
+  // ============ PAGE LOAD CHOREOGRAPHY ============
+  // Night sky → stars → "Sev" blurs in → "hold." fades in
+  // CSS handles the name animation; we trigger the prompt after a delay.
+  setTimeout(function() {
+    if (stage === 0) {
+      stage = 1;
+      showPrompt('prompt-hold');
+      announce('Hold to let the light in');
+    }
+  }, 2200);
+
+  // ============ INPUT BINDINGS ============
+  // Mouse
+  document.addEventListener('mousedown', onHoldStart);
+  document.addEventListener('mouseup', onHoldEnd);
+  document.addEventListener('mouseleave', onHoldEnd);
+  // Touch
+  document.addEventListener('touchstart', onHoldStart, { passive: false });
+  document.addEventListener('touchend', onHoldEnd);
+  document.addEventListener('touchcancel', onHoldEnd);
+  // Keyboard (Space/Enter to hold)
+  let keyHeld = false;
+  document.addEventListener('keydown', (e) => {
+    if ((e.code === 'Space' || e.code === 'Enter') && !keyHeld) {
+      e.preventDefault();
+      keyHeld = true;
+      onHoldStart();
+    }
+  });
+  document.addEventListener('keyup', (e) => {
+    if (e.code === 'Space' || e.code === 'Enter') {
+      keyHeld = false;
+      onHoldEnd();
+    }
+  });
+
+  // ============ AUDIO: bassline fade-in (disco groove) ============
+  function startBasslineFade() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = audioCtx;
+    if (ctx.state === 'suspended') ctx.resume();
+    const bpm = 116;
+    const beat = 60 / bpm;
+    const bars = 8;
+    const bassPattern = [
+      { note: 65.41, time: 0 },
+      { note: 65.41, time: beat * 0.5 },
+      { note: 49.00, time: beat * 1 },
+      { note: 65.41, time: beat * 1.5 },
+      { note: 77.78, time: beat * 2 },
+      { note: 65.41, time: beat * 2.5 },
+      { note: 49.00, time: beat * 3 },
+      { note: 58.27, time: beat * 3.5 }
+    ];
+    const masterGain = ctx.createGain();
+    masterGain.gain.value = 0; // start muted
+    masterGain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 3.5); // fade in over 3.5s
+    masterGain.connect(ctx.destination);
+    const now = ctx.currentTime + 0.3;
+    for (let bar = 0; bar < bars; bar++) {
+      const barStart = now + bar * beat * 4;
+      bassPattern.forEach(function(bp) {
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        var t = barStart + bp.time;
+        osc.type = 'sawtooth';
+        osc.frequency.value = bp.note;
+        var filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 600;
+        filter.Q.value = 8;
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.15, t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + beat * 0.4);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(masterGain);
+        osc.start(t);
+        osc.stop(t + beat * 0.5);
+      });
+      // Hi-hats
+      for (var h = 0; h < 8; h++) {
+        var t = barStart + h * beat * 0.5 + beat * 0.25;
+        var noise = ctx.createBufferSource();
+        var buf = ctx.createBuffer(1, 2048, ctx.sampleRate);
+        var data = buf.getChannelData(0);
+        for (var ii = 0; ii < 2048; ii++) data[ii] = Math.random() * 2 - 1;
+        noise.buffer = buf;
+        var hpf = ctx.createBiquadFilter();
+        hpf.type = 'highpass';
+        hpf.frequency.value = 8000;
+        var hgain = ctx.createGain();
+        hgain.gain.setValueAtTime(0.03, t);
+        hgain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+        noise.connect(hpf);
+        hpf.connect(hgain);
+        hgain.connect(masterGain);
+        noise.start(t);
+        noise.stop(t + 0.05);
+      }
+      // Kick
+      [0, 2].forEach(function(beatNum) {
+        var t = barStart + beatNum * beat;
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.frequency.setValueAtTime(150, t);
+        osc.frequency.exponentialRampToValueAtTime(40, t + 0.1);
+        gain.gain.setValueAtTime(0.2, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(t);
+        osc.stop(t + 0.15);
+      });
+    }
+  }
+})();
+</script>
+</body>
+</html>
