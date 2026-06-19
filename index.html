@@ -426,6 +426,18 @@ body {
   text-shadow: 0 0 18px rgba(232,194,133,0.5);
 }
 #stage-4 .chest-hint.show { opacity: 0.85; animation: holdPulse 2.2s ease-in-out infinite; }
+#stage-4 .chest-disc {
+  position: absolute; left: 50%; top: 36%; width: 60px; height: 60px;
+  opacity: 0; pointer-events: none;
+  filter: drop-shadow(0 6px 14px rgba(232,194,133,0.5));
+}
+#stage-4 .chest-disc svg { width: 100%; height: 100%; display: block; }
+#stage-4 .chest.open .chest-disc { animation: discRise 1.7s cubic-bezier(0.22,1,0.36,1) 0.45s forwards; }
+@keyframes discRise {
+  0%   { opacity: 0; transform: translate(-50%, 20%) scale(0.25) rotate(0deg); }
+  30%  { opacity: 1; }
+  100% { opacity: 1; transform: translate(-50%, -130%) scale(1) rotate(220deg); }
+}
 
 /* ============ STAGE 5: REVEAL (record player → desktop → typewriter) ============ */
 #stage-5 {
@@ -455,6 +467,21 @@ body {
   text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 }
 #stage-5 .rp-hint.show { opacity: 0.85; }
+#stage-5 .vinyl-disc-group { opacity: 0; transition: opacity 0.4s ease; }
+#stage-5 .vinyl-disc-group.loaded { opacity: 1; }
+#stage-5 .loose-disc {
+  position: absolute; left: 50%; top: 82%;
+  width: clamp(88px, 22vw, 118px); aspect-ratio: 1; z-index: 16;
+  transform: translate(-50%, -50%); cursor: grab; touch-action: none;
+  filter: drop-shadow(0 8px 18px rgba(180,110,160,0.45));
+  opacity: 0; transition: opacity 1s ease;
+  animation: discFloat 3.4s ease-in-out infinite;
+}
+#stage-5 .loose-disc.show { opacity: 1; }
+#stage-5 .loose-disc.grabbing { cursor: grabbing; animation: none; }
+#stage-5 .loose-disc.gone { opacity: 0; pointer-events: none; }
+#stage-5 .loose-disc svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+@keyframes discFloat { 0%,100% { translate: 0 0; } 50% { translate: 0 -7px; } }
 @keyframes vinylSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 #stage-5 .vinyl-disc.spinning { animation: vinylSpin 2.5s linear infinite; transform-origin: center; }
 #stage-5 .tonearm { transform-origin: 82% 18%; transition: transform 1.4s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -763,6 +790,14 @@ body {
         <path d="M20 70 Q100 40 180 70" fill="none" stroke="#caa05a" stroke-width="3" opacity="0.55"/>
       </g>
     </svg>
+    <div class="chest-disc" aria-hidden="true">
+      <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="38" fill="#3a1c2a" stroke="#b5547a" stroke-width="2"/>
+        <circle cx="40" cy="40" r="28" fill="none" stroke="rgba(243,198,214,0.2)" stroke-width="0.8"/>
+        <circle cx="40" cy="40" r="12" fill="#f3c6d6" stroke="#b5547a" stroke-width="1"/>
+        <circle cx="40" cy="40" r="2.5" fill="#b5547a"/>
+      </svg>
+    </div>
   </div>
   <p class="chest-hint" id="chest-hint">open it.</p>
 </div>
@@ -792,7 +827,11 @@ body {
       <rect x="30" y="50" width="240" height="170" rx="14" fill="#f6b4d0" stroke="#ec96b8" stroke-width="2.5"/>
       <rect x="34" y="54" width="232" height="162" rx="11" fill="none" stroke="#f7cfe0" stroke-width="1.5"/>
 
-      <!-- Vinyl disc -->
+      <!-- empty platter recess + spindle (visible until the record is dropped in) -->
+      <circle cx="150" cy="130" r="72" fill="#efa9c6" stroke="#ec96b8" stroke-width="1.5"/>
+      <circle cx="150" cy="130" r="56" fill="none" stroke="#e890b4" stroke-width="1"/>
+      <circle cx="150" cy="130" r="4" fill="#b5547a"/>
+      <!-- Vinyl disc (revealed when loaded) -->
       <g class="vinyl-disc-group" id="vinyl-disc-group">
         <circle cx="150" cy="130" r="70" fill="#3a1c2a" stroke="#b5547a" stroke-width="1.5"/>
         <!-- Grooves -->
@@ -837,7 +876,22 @@ body {
       <rect x="50" y="220" width="10" height="6" rx="2" fill="#c87aa6"/>
       <rect x="240" y="220" width="10" height="6" rx="2" fill="#c87aa6"/>
     </svg>
-    <p class="rp-hint" id="rp-hint">click to play.</p>
+    <p class="rp-hint" id="rp-hint">drag the record in.</p>
+  </div>
+
+  <!-- The loose vinyl she drags onto the platter -->
+  <div class="loose-disc" id="loose-disc">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="60" cy="60" r="58" fill="#3a1c2a" stroke="#b5547a" stroke-width="2"/>
+      <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(243,198,214,0.18)" stroke-width="0.8"/>
+      <circle cx="60" cy="60" r="42" fill="none" stroke="rgba(243,198,214,0.18)" stroke-width="0.8"/>
+      <circle cx="60" cy="60" r="34" fill="none" stroke="rgba(243,198,214,0.18)" stroke-width="0.8"/>
+      <circle cx="60" cy="60" r="26" fill="none" stroke="rgba(243,198,214,0.18)" stroke-width="0.8"/>
+      <circle cx="60" cy="60" r="18" fill="#f3c6d6" stroke="#b5547a" stroke-width="1.2"/>
+      <circle cx="60" cy="60" r="3" fill="#b5547a"/>
+      <text x="60" y="58" text-anchor="middle" fill="#a9466b" font-size="6" font-family="Fraunces, serif" font-style="italic" opacity="0.85">For Sev</text>
+      <text x="60" y="68" text-anchor="middle" fill="#a9466b" font-size="4.5" font-family="Inter, sans-serif" opacity="0.6">side a</text>
+    </svg>
   </div>
   
   <!-- Phase 2: torn-paper note -->
@@ -1496,8 +1550,8 @@ body {
     if (chest.classList.contains('open') || !chest.classList.contains('show')) return;
     chest.classList.add('open');
     document.getElementById('chest-hint').classList.remove('show');
-    // golden light, then the record player rises from inside
-    setTimeout(() => goToStage(4), 1900);
+    // golden light, the record rises out, then on to the player
+    setTimeout(() => goToStage(4), 2700);
   }
 
   // ============ STAGE 5: REVEAL — record player → desktop → typewriter ============
@@ -1539,6 +1593,7 @@ body {
   let s5Done = false;
   let s5TypeInterval = null;
   let s5Phase = 0; // 0=record player, 1=press start, 2=desktop, 3=typing
+  let s5Loading = false; // disc being dropped onto the platter
   let audioCtx = null;
   let grooveStarted = false;
   let s5Audio = null;
@@ -1569,16 +1624,88 @@ body {
     toggle.innerHTML = ICON_PLAY; toggle.setAttribute('aria-label', 'Play music');
   }
 
+  // ---- drag the loose record onto the platter ----
+  function setupDiscDrag() {
+    const disc = document.getElementById('loose-disc');
+    let dragging = false, sx = 0, sy = 0, moved = false;
+    disc.addEventListener('pointerdown', function(e) {
+      if (s5Phase !== 0 || s5Loading) return;
+      dragging = true; moved = false;
+      try { disc.setPointerCapture(e.pointerId); } catch (err) {}
+      disc.classList.add('grabbing');
+      const r = disc.getBoundingClientRect();
+      disc.style.left = (r.left + r.width / 2) + 'px';
+      disc.style.top = (r.top + r.height / 2) + 'px';
+      disc.style.transform = 'translate(-50%, -50%)';
+      sx = e.clientX; sy = e.clientY;
+      e.preventDefault();
+    });
+    disc.addEventListener('pointermove', function(e) {
+      if (!dragging) return;
+      if (Math.abs(e.clientX - sx) > 4 || Math.abs(e.clientY - sy) > 4) moved = true;
+      disc.style.left = e.clientX + 'px';
+      disc.style.top = e.clientY + 'px';
+    });
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      disc.classList.remove('grabbing');
+      const player = document.getElementById('record-player').getBoundingClientRect();
+      const px = player.left + player.width * 0.5;
+      const py = player.top + player.height * 0.5;
+      const dr = disc.getBoundingClientRect();
+      const dist = Math.hypot((dr.left + dr.width / 2) - px, (dr.top + dr.height / 2) - py);
+      if (!moved || dist < player.width * 0.36) {
+        loadRecord(px, py);
+      } else {
+        // didn't reach the platter — ease back home
+        disc.style.transition = 'left 0.45s cubic-bezier(0.22,1,0.36,1), top 0.45s cubic-bezier(0.22,1,0.36,1)';
+        disc.style.left = (window.innerWidth * 0.5) + 'px';
+        disc.style.top = (window.innerHeight * 0.82) + 'px';
+        setTimeout(function() { disc.style.transition = ''; }, 470);
+      }
+    }
+    disc.addEventListener('pointerup', endDrag);
+    disc.addEventListener('pointercancel', endDrag);
+  }
+
+  function loadRecord(px, py) {
+    if (s5Phase !== 0 || s5Loading) return;
+    s5Loading = true;
+    document.getElementById('rp-hint').classList.remove('show');
+    const disc = document.getElementById('loose-disc');
+    if (px == null) {
+      const player = document.getElementById('record-player').getBoundingClientRect();
+      px = player.left + player.width * 0.5;
+      py = player.top + player.height * 0.5;
+    }
+    disc.style.animation = 'none';
+    disc.style.transition = 'left 0.5s cubic-bezier(0.22,1,0.36,1), top 0.5s cubic-bezier(0.22,1,0.36,1), transform 0.5s ease, opacity 0.4s ease';
+    disc.style.left = px + 'px';
+    disc.style.top = py + 'px';
+    disc.style.transform = 'translate(-50%, -50%) scale(0.5) rotate(40deg)';
+    setTimeout(function() {
+      disc.classList.add('gone');
+      document.getElementById('vinyl-disc-group').classList.add('loaded');
+      s5PlayRecord();
+    }, 520);
+  }
+
   function initStage5() {
     s5Phase = 0;
-    // Show hint after 1.5s
+    s5Loading = false;
+    // Reveal the hint and the loose record after a beat
     setTimeout(() => {
-      if (s5Phase === 0) document.getElementById('rp-hint').classList.add('show');
-    }, 1500);
-    // Click handler on record player
+      if (s5Phase === 0) {
+        document.getElementById('rp-hint').classList.add('show');
+        document.getElementById('loose-disc').classList.add('show');
+      }
+    }, 1400);
+    setupDiscDrag();
+    // Tap fallback: tapping the player (or the disc, handled in drag) loads it
     const rp = document.getElementById('record-player');
-    rp.addEventListener('click', function() { s5PlayRecord(); });
-    rp.addEventListener('touchstart', function(e) { e.preventDefault(); s5PlayRecord(); });
+    rp.addEventListener('click', function() { loadRecord(); });
+    rp.addEventListener('touchstart', function(e) { e.preventDefault(); loadRecord(); });
     // Audio control bar — stop presses from bubbling into the advance handler
     const audioBar = document.getElementById('audio-bar');
     audioBar.addEventListener('mousedown', function(e) { e.stopPropagation(); });
@@ -1843,7 +1970,7 @@ body {
     if (e.code === 'Space' || e.code === 'Enter') {
       e.preventDefault();
       if (currentStage === 0) s1HoldStart();
-      else if (currentStage === 4) s5Advance();
+      else if (currentStage === 4) { if (s5Phase === 0) loadRecord(); else s5Advance(); }
       // Stages 2–4 need precise pointer motion to play; keyboard advances them instead
       else if (currentStage >= 1 && currentStage <= 3) skipStage();
     }
