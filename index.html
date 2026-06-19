@@ -173,7 +173,9 @@ body {
 
 /* ============ STAGE 2: GARDEN (plant roses) ============ */
 #stage-2 {
-  background: linear-gradient(180deg, var(--p-night) 0%, var(--p-plum) 28%, var(--p-mulb) 55%, var(--p-rose) 82%, var(--p-blush) 100%);
+  background:
+    radial-gradient(120% 80% at 50% 16%, #ffe7f2 0%, transparent 55%),
+    linear-gradient(180deg, #f8dbe9 0%, #f3cee0 45%, #eebfd6 100%);
 }
 #stage-2 .garden-light {
   position: absolute; inset: 0;
@@ -183,9 +185,9 @@ body {
   position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
   font-family: 'Equinox', serif; font-style: italic; font-weight: 300;
   font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-  color: var(--p-cream); white-space: nowrap;
+  color: #8a2f55; white-space: nowrap;
   opacity: 0; filter: blur(12px);
-  text-shadow: 0 0 22px rgba(110,47,78,0.7), 0 0 8px rgba(42,22,34,0.6);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 }
 #stage-2 .stage-prompt.show { animation: blurIn 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 #stage-2 .stage-prompt.fade { animation: blurOut 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
@@ -222,13 +224,21 @@ body {
 }
 #stage-2 .flower-thought {
   position: absolute; transform: translateX(-50%) translateY(8px);
-  font-family: 'Equinox', serif; font-style: italic; color: var(--p-cream);
-  font-size: clamp(0.85rem, 1.8vw, 1.05rem); white-space: nowrap;
+  font-family: 'Equinox', serif; font-style: italic; color: #8a2f55;
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+  max-width: min(60vw, 16em); text-align: center; line-height: 1.4;
   opacity: 0; filter: blur(8px); pointer-events: none; z-index: 8;
-  text-shadow: 0 0 16px rgba(110,47,78,0.85), 0 0 6px rgba(42,22,34,0.7);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
   transition: opacity 1s ease, filter 1s ease, transform 1s ease;
 }
 #stage-2 .flower-thought.show { opacity: 1; filter: blur(0); transform: translateX(-50%) translateY(0); }
+/* decorative flowers scattered across the garden (from flower.svg / flower2.svg) */
+#stage-2 .deco-flower {
+  position: absolute; bottom: -2%; pointer-events: none; z-index: 1;
+  transform-origin: bottom center;
+  filter: drop-shadow(0 6px 14px rgba(42,22,34,0.4));
+  opacity: 0; transition: opacity 1.6s ease;
+}
 
 /* ============ STAGE 3: AUTUMN (catch leaves) ============ */
 #stage-3 {
@@ -238,8 +248,8 @@ body {
   position: absolute; inset: 0; z-index: 0; pointer-events: none;
   opacity: var(--dawn3);
   background:
-    radial-gradient(58% 42% at 50% 82%, rgba(255,224,206,0.9) 0%, transparent 60%),
-    linear-gradient(180deg, transparent 0%, rgba(217,138,168,0.28) 50%, rgba(247,204,176,0.6) 100%);
+    radial-gradient(58% 42% at 50% 82%, rgba(255,224,206,0.92) 0%, transparent 60%),
+    linear-gradient(180deg, rgba(247,205,171,0.5) 0%, rgba(217,138,168,0.32) 45%, rgba(247,204,176,0.66) 100%);
 }
 #stage-3 .autumn-sun {
   position: absolute; left: 50%; bottom: 6%;
@@ -347,8 +357,8 @@ body {
 /* ============ STAGE 4: CANDLES (light the path, open the chest) ============ */
 #stage-4 {
   background:
-    radial-gradient(70% 50% at 50% 80%, rgba(122,52,72,0.55) 0%, transparent 62%),
-    linear-gradient(180deg, #1d0e18 0%, #2e1322 45%, #43203a 78%, #5a2740 100%);
+    radial-gradient(75% 55% at 50% 84%, rgba(247,180,150,0.4) 0%, transparent 60%),
+    linear-gradient(180deg, #f7cdab 0%, #e39a8e 12%, #a85a6e 30%, #6e2f4e 52%, #43203a 78%, #2e1322 100%);
 }
 #stage-4 .stage-prompt {
   position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
@@ -434,15 +444,15 @@ body {
 #stage-5 .record-player-wrap.hide { opacity: 0; pointer-events: none; }
 #stage-5 .record-player {
   width: min(340px, 72vw); height: auto; cursor: pointer;
-  filter: drop-shadow(0 8px 30px rgba(232, 194, 133, 0.15));
+  filter: drop-shadow(0 10px 28px rgba(180, 110, 160, 0.3));
   transition: transform 0.3s ease;
 }
 #stage-5 .record-player:hover { transform: scale(1.02); }
 #stage-5 .rp-hint {
   margin-top: 2rem; font-family: 'Equinox', serif; font-style: italic;
-  font-size: clamp(0.9rem, 1.8vw, 1.1rem); color: var(--c-gold);
+  font-size: clamp(0.9rem, 1.8vw, 1.1rem); color: #a9466b;
   opacity: 0; transition: opacity 1s ease;
-  text-shadow: 0 0 16px rgba(232, 194, 133, 0.5);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 }
 #stage-5 .rp-hint.show { opacity: 0.85; }
 @keyframes vinylSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -771,60 +781,61 @@ body {
   <div class="record-player-wrap" id="record-player-wrap">
     <svg class="record-player" id="record-player" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg">
       <!-- Clamshell lid (open, angled up) -->
-      <path d="M40 50 Q150 20 260 50 L255 15 Q150 -10 45 15 Z" fill="rgba(26,31,46,0.9)" stroke="#e8c285" stroke-width="1.5"/>
+      <path d="M40 50 Q150 20 260 50 L255 15 Q150 -10 45 15 Z" fill="#f9c2da" stroke="#ec96b8" stroke-width="2"/>
       <!-- Lid hinge -->
-      <line x1="45" y1="15" x2="45" y2="50" stroke="#e8c285" stroke-width="1.5"/>
-      <line x1="255" y1="15" x2="255" y2="50" stroke="#e8c285" stroke-width="1.5"/>
+      <line x1="45" y1="15" x2="45" y2="50" stroke="#ec96b8" stroke-width="2"/>
+      <line x1="255" y1="15" x2="255" y2="50" stroke="#ec96b8" stroke-width="2"/>
       <!-- Latch -->
-      <rect x="145" y="45" width="10" height="6" rx="1" fill="#e8c285" opacity="0.6"/>
-      
+      <rect x="145" y="45" width="10" height="6" rx="1" fill="#b5547a" opacity="0.7"/>
+
       <!-- Base/Body -->
-      <rect x="30" y="50" width="240" height="170" rx="12" fill="rgba(19,28,46,0.95)" stroke="#e8c285" stroke-width="1.5"/>
-      
+      <rect x="30" y="50" width="240" height="170" rx="14" fill="#f6b4d0" stroke="#ec96b8" stroke-width="2.5"/>
+      <rect x="34" y="54" width="232" height="162" rx="11" fill="none" stroke="#f7cfe0" stroke-width="1.5"/>
+
       <!-- Vinyl disc -->
       <g class="vinyl-disc-group" id="vinyl-disc-group">
-        <circle cx="150" cy="130" r="70" fill="#0a0f1c" stroke="#2a2a35" stroke-width="1"/>
+        <circle cx="150" cy="130" r="70" fill="#3a1c2a" stroke="#b5547a" stroke-width="1.5"/>
         <!-- Grooves -->
-        <circle cx="150" cy="130" r="60" fill="none" stroke="rgba(232,194,133,0.08)" stroke-width="0.5"/>
-        <circle cx="150" cy="130" r="50" fill="none" stroke="rgba(232,194,133,0.08)" stroke-width="0.5"/>
-        <circle cx="150" cy="130" r="40" fill="none" stroke="rgba(232,194,133,0.08)" stroke-width="0.5"/>
-        <circle cx="150" cy="130" r="30" fill="none" stroke="rgba(232,194,133,0.08)" stroke-width="0.5"/>
+        <circle cx="150" cy="130" r="60" fill="none" stroke="rgba(243,198,214,0.18)" stroke-width="0.5"/>
+        <circle cx="150" cy="130" r="50" fill="none" stroke="rgba(243,198,214,0.18)" stroke-width="0.5"/>
+        <circle cx="150" cy="130" r="40" fill="none" stroke="rgba(243,198,214,0.18)" stroke-width="0.5"/>
+        <circle cx="150" cy="130" r="30" fill="none" stroke="rgba(243,198,214,0.18)" stroke-width="0.5"/>
         <!-- Center label -->
-        <circle cx="150" cy="130" r="20" fill="#1a1f2e" stroke="#e8c285" stroke-width="1"/>
-        <circle cx="150" cy="130" r="3" fill="#e8c285"/>
+        <circle cx="150" cy="130" r="20" fill="#f3c6d6" stroke="#b5547a" stroke-width="1.2"/>
+        <circle cx="150" cy="130" r="3" fill="#b5547a"/>
         <!-- Label text -->
-        <text x="150" y="125" text-anchor="middle" fill="#e8c285" font-size="6" font-family="Fraunces, serif" font-style="italic" opacity="0.7">For Sev</text>
-        <text x="150" y="138" text-anchor="middle" fill="#e8c285" font-size="4" font-family="Inter, sans-serif" opacity="0.5">side a</text>
+        <text x="150" y="125" text-anchor="middle" fill="#a9466b" font-size="6" font-family="Fraunces, serif" font-style="italic" opacity="0.85">For Sev</text>
+        <text x="150" y="138" text-anchor="middle" fill="#a9466b" font-size="4" font-family="Inter, sans-serif" opacity="0.6">side a</text>
       </g>
-      
+
       <!-- Tonearm -->
       <g class="tonearm" id="tonearm">
         <!-- Pivot -->
-        <circle cx="245" cy="65" r="8" fill="#2a2a35" stroke="#e8c285" stroke-width="1.5"/>
-        <circle cx="245" cy="65" r="3" fill="#e8c285"/>
+        <circle cx="245" cy="65" r="8" fill="#f3c6d6" stroke="#b5547a" stroke-width="1.5"/>
+        <circle cx="245" cy="65" r="3" fill="#b5547a"/>
         <!-- Arm -->
-        <line x1="245" y1="65" x2="185" y2="120" stroke="#e8c285" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="245" y1="65" x2="185" y2="120" stroke="#b5547a" stroke-width="2.5" stroke-linecap="round"/>
         <!-- Cartridge head -->
-        <rect x="178" y="115" width="14" height="10" rx="2" fill="#e8c285" opacity="0.8"/>
+        <rect x="178" y="115" width="14" height="10" rx="2" fill="#b5547a" opacity="0.85"/>
       </g>
-      
+
       <!-- Control buttons -->
-      <rect x="55" y="195" width="24" height="16" rx="3" fill="rgba(232,194,133,0.1)" stroke="#e8c285" stroke-width="0.8"/>
-      <rect x="60" y="199" width="6" height="8" fill="#e8c285" opacity="0.5"/>
-      <rect x="90" y="195" width="24" height="16" rx="3" fill="rgba(232,194,133,0.1)" stroke="#e8c285" stroke-width="0.8"/>
-      <path d="M96 199 L96 207 L104 203 Z" fill="#e8c285" opacity="0.6"/>
+      <rect x="55" y="195" width="24" height="16" rx="3" fill="rgba(255,255,255,0.4)" stroke="#c87aa6" stroke-width="1"/>
+      <rect x="60" y="199" width="6" height="8" fill="#b5547a" opacity="0.7"/>
+      <rect x="90" y="195" width="24" height="16" rx="3" fill="rgba(255,255,255,0.4)" stroke="#c87aa6" stroke-width="1"/>
+      <path d="M96 199 L96 207 L104 203 Z" fill="#b5547a" opacity="0.75"/>
       <!-- Digital display -->
-      <rect x="125" y="195" width="50" height="16" rx="2" fill="#0a0f1c" stroke="#e8c285" stroke-width="0.8"/>
-      <text x="150" y="206" text-anchor="middle" fill="#e8c285" font-size="7" font-family="Courier New, monospace" opacity="0.7">00:00</text>
+      <rect x="125" y="195" width="50" height="16" rx="2" fill="#3a1c2a" stroke="#c87aa6" stroke-width="1"/>
+      <text x="150" y="206" text-anchor="middle" fill="#f3c6d6" font-size="7" font-family="Courier New, monospace" opacity="0.85">00:00</text>
       <!-- FF buttons -->
-      <rect x="185" y="195" width="24" height="16" rx="3" fill="rgba(232,194,133,0.1)" stroke="#e8c285" stroke-width="0.8"/>
-      <path d="M191 199 L197 203 L191 207 M197 199 L203 203 L197 207" stroke="#e8c285" stroke-width="0.8" fill="none" opacity="0.5"/>
-      <rect x="220" y="195" width="24" height="16" rx="3" fill="rgba(232,194,133,0.1)" stroke="#e8c285" stroke-width="0.8"/>
-      <path d="M226 199 L232 203 L226 207 M232 199 L238 203 L232 207" stroke="#e8c285" stroke-width="0.8" fill="none" opacity="0.5"/>
-      
+      <rect x="185" y="195" width="24" height="16" rx="3" fill="rgba(255,255,255,0.4)" stroke="#c87aa6" stroke-width="1"/>
+      <path d="M191 199 L197 203 L191 207 M197 199 L203 203 L197 207" stroke="#b5547a" stroke-width="1" fill="none" opacity="0.7"/>
+      <rect x="220" y="195" width="24" height="16" rx="3" fill="rgba(255,255,255,0.4)" stroke="#c87aa6" stroke-width="1"/>
+      <path d="M226 199 L232 203 L226 207 M232 199 L238 203 L232 207" stroke="#b5547a" stroke-width="1" fill="none" opacity="0.7"/>
+
       <!-- Feet -->
-      <rect x="50" y="220" width="10" height="6" rx="2" fill="#2a2a35"/>
-      <rect x="240" y="220" width="10" height="6" rx="2" fill="#2a2a35"/>
+      <rect x="50" y="220" width="10" height="6" rx="2" fill="#c87aa6"/>
+      <rect x="240" y="220" width="10" height="6" rx="2" fill="#c87aa6"/>
     </svg>
     <p class="rp-hint" id="rp-hint">click to play.</p>
   </div>
@@ -1138,7 +1149,7 @@ body {
   const FLOWERS = [
     { outer: '#9b2d4e', mid: '#b5546e', inner: '#c4607a', tip: '#e08a9d', scale: 1.0,  thought: 'bloom slowly.' },
     { outer: '#7a2f4a', mid: '#a9466b', inner: '#cf7ea0', tip: '#f0b8cf', scale: 1.22, thought: 'reach higher.' },
-    { outer: '#b8617e', mid: '#d98aa8', inner: '#eab0c6', tip: '#fad6e2', scale: 0.84, thought: 'stay soft.' }
+    { outer: '#b8617e', mid: '#d98aa8', inner: '#eab0c6', tip: '#fad6e2', scale: 0.84, thought: "don't stop till you get enough." }
   ];
 
   function buildRoseSVG(p) {
@@ -1301,6 +1312,26 @@ body {
     // Stop growing on release (anywhere on document)
     document.addEventListener('mouseup', s2StopGrowing);
     document.addEventListener('touchend', s2StopGrowing);
+    // Scatter a few decorative flowers (loaded now; the two files are reused from cache)
+    const deco = [
+      { src: 'flower2-sm.png', x: 6,  h: 26, r: -7, o: 0.85 },
+      { src: 'flower-sm.png',  x: 19, h: 20, r: 5,  o: 0.7  },
+      { src: 'flower2-sm.png', x: 41, h: 15, r: -3, o: 0.6  },
+      { src: 'flower-sm.png',  x: 63, h: 23, r: 6,  o: 0.8  },
+      { src: 'flower2-sm.png', x: 81, h: 18, r: -5, o: 0.66 },
+      { src: 'flower-sm.png',  x: 94, h: 28, r: 8,  o: 0.85 }
+    ];
+    deco.forEach((d, i) => {
+      const img = document.createElement('img');
+      img.className = 'deco-flower';
+      img.src = d.src;
+      img.alt = '';
+      img.style.left = d.x + '%';
+      img.style.height = d.h + 'vh';
+      img.style.transform = 'translateX(-50%) rotate(' + d.r + 'deg)';
+      stage2.appendChild(img);
+      setTimeout(() => { img.style.opacity = d.o; }, 200 + i * 120);
+    });
     setTimeout(() => { if (currentStage === 1) showPrompt('prompt-s2'); }, 1200);
   }
 
