@@ -495,7 +495,7 @@ body {
   opacity: 0; pointer-events: none; transition: opacity 1s ease;
 }
 #stage-5 .press-start.show { opacity: 1; pointer-events: auto; cursor: pointer; }
-#stage-5 .torn-note {
+.torn-note {
   position: relative; padding: 30px 48px; max-width: 320px;
   background: linear-gradient(180deg, #f3ead4 0%, #e7d8ba 100%);
   color: #3a2a1a; text-align: center;
@@ -505,11 +505,17 @@ body {
   animation: noteIn 0.9s cubic-bezier(0.22,1,0.36,1) both;
 }
 @keyframes noteIn { 0% { opacity: 0; transform: rotate(-2.4deg) translateY(16px) scale(0.96); } 100% { opacity: 1; transform: rotate(-2.4deg) translateY(0) scale(1); } }
-#stage-5 .note-text {
+.note-text {
   font-family: 'PARISIAN', 'Equinox', serif; font-style: italic;
   font-size: clamp(1.5rem, 3.6vw, 2.1rem); letter-spacing: 0.02em;
 }
-#stage-5 .torn-note .chevron-pulse { color: #8a4a26; }
+.torn-note .chevron-pulse { color: #8a4a26; }
+/* "You got mail" note in the chest stage */
+#stage-4 .mail-note {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  z-index: 12; opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
+}
+#stage-4 .mail-note.show { opacity: 1; }
 #stage-5 .chevron-pulse {
   margin-top: 1.5rem; font-size: 1.5rem; color: var(--c-gold);
   animation: chevronPulse 1.8s ease-in-out infinite;
@@ -676,20 +682,6 @@ body {
   opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
 }
 #stage-5 .audio-bar.show { opacity: 1; pointer-events: auto; }
-#stage-5 .voicemail {
-  position: absolute; top: 44%; left: 50%; transform: translate(-50%, -50%);
-  z-index: 18; text-align: center; pointer-events: none;
-  opacity: 0; filter: blur(12px); transition: opacity 1s ease, filter 1s ease;
-}
-#stage-5 .voicemail.show { opacity: 1; filter: blur(0); }
-#stage-5 .vm-icon { width: clamp(54px, 12vw, 72px); margin: 0 auto 0.8rem; animation: vmPulse 1.6s ease-in-out infinite; }
-#stage-5 .vm-icon svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 0 14px rgba(181,84,122,0.5)); }
-#stage-5 .vm-text {
-  font-family: 'PARISIAN', 'Equinox', serif; font-style: italic;
-  font-size: clamp(1.5rem, 4vw, 2.3rem); color: #a9466b; letter-spacing: 0.02em;
-  text-shadow: 0 0 24px rgba(255,255,255,0.6);
-}
-@keyframes vmPulse { 0%,100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.08); opacity: 1; } }
 #stage-5 .audio-btn {
   width: 30px; height: 30px; border-radius: 50%; cursor: pointer; padding: 0;
   background: #ffe3ef; border: 2px solid #ec96b8;
@@ -815,6 +807,11 @@ body {
     </div>
   </div>
   <p class="chest-hint" id="chest-hint">open it.</p>
+  <div class="mail-note" id="mail-note">
+    <div class="torn-note">
+      <p class="note-text">You got mail</p>
+    </div>
+  </div>
 </div>
 
 <!-- STAGE 5: REVEAL — record player → desktop → typewriter -->
@@ -909,18 +906,6 @@ body {
     </svg>
   </div>
   
-  <!-- "You got voicemail" beat -->
-  <div class="voicemail" id="voicemail">
-    <div class="vm-icon" aria-hidden="true">
-      <svg viewBox="0 0 64 40" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="16" cy="26" r="9" fill="none" stroke="#b5547a" stroke-width="3"/>
-        <circle cx="48" cy="26" r="9" fill="none" stroke="#b5547a" stroke-width="3"/>
-        <line x1="16" y1="17" x2="48" y2="17" stroke="#b5547a" stroke-width="3"/>
-      </svg>
-    </div>
-    <p class="vm-text">You got voicemail</p>
-  </div>
-
   <!-- Phase 2: torn-paper note -->
   <div class="press-start" id="press-start">
     <div class="torn-note">
@@ -1578,8 +1563,9 @@ body {
     if (chest.classList.contains('open') || !chest.classList.contains('show')) return;
     chest.classList.add('open');
     document.getElementById('chest-hint').classList.remove('show');
-    // golden light, the record rises out, then on to the player
-    setTimeout(() => goToStage(4), 2700);
+    // the record rises out, then "You got mail", hold ~3.5s, then on to the player
+    setTimeout(() => { document.getElementById('mail-note').classList.add('show'); }, 1900);
+    setTimeout(() => goToStage(4), 5400);
   }
 
   // ============ STAGE 5: REVEAL — record player → desktop → typewriter ============
@@ -1683,10 +1669,10 @@ body {
       const py = player.top + player.height * 0.5;
       const dr = disc.getBoundingClientRect();
       const dist = Math.hypot((dr.left + dr.width / 2) - px, (dr.top + dr.height / 2) - py);
-      if (!moved || dist < player.width * 0.36) {
+      if (moved && dist < player.width * 0.45) {
         loadRecord(px, py);
       } else {
-        // didn't reach the platter — ease back home
+        // a tap, or didn't reach the platter — ease back home
         disc.style.transition = 'left 0.45s cubic-bezier(0.22,1,0.36,1), top 0.45s cubic-bezier(0.22,1,0.36,1)';
         disc.style.left = (window.innerWidth * 0.5) + 'px';
         disc.style.top = (window.innerHeight * 0.82) + 'px';
@@ -1731,10 +1717,7 @@ body {
       }
     }, 1400);
     setupDiscDrag();
-    // Tap fallback: tapping the player (or the disc, handled in drag) loads it
-    const rp = document.getElementById('record-player');
-    rp.addEventListener('click', function() { loadRecord(); });
-    rp.addEventListener('touchstart', function(e) { e.preventDefault(); loadRecord(); });
+    // Drag-only: she must drag the record onto the platter (no click/tap to play)
     // Audio control bar — stop presses from bubbling into the advance handler
     const audioBar = document.getElementById('audio-bar');
     audioBar.addEventListener('mousedown', function(e) { e.stopPropagation(); });
@@ -1771,17 +1754,12 @@ body {
     document.getElementById('tonearm').classList.add('dropped');
     // spin the vinyl shortly after the tonearm lands
     setTimeout(() => { document.getElementById('vinyl-disc-group').classList.add('spinning'); }, 900);
-    // ~4s after it starts playing: "You got voicemail", then the note
+    // let the song play a moment, then the scroll-down note
     setTimeout(() => {
       if (s5Phase !== 1) return;
       document.getElementById('record-player-wrap').classList.add('hide');
-      const vm = document.getElementById('voicemail');
-      vm.classList.add('show');
-      setTimeout(() => {
-        vm.classList.remove('show');
-        setTimeout(() => { if (s5Phase === 1) document.getElementById('press-start').classList.add('show'); }, 900);
-      }, 2600);
-    }, 4000);
+      document.getElementById('press-start').classList.add('show');
+    }, 4500);
   }
 
   function s5PressStart() {
