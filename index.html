@@ -1735,8 +1735,9 @@ body {
     if (s5Audio) return;
     s5Audio = new Audio('song.mp3');
     s5Audio.loop = true;
+    s5Audio.muted = true;  // iOS IGNORES volume=0; muted is respected -> truly silent
     s5Audio.volume = 0;
-    s5Audio.play().catch(function () {}); // plays silently until startSong fades it in
+    s5Audio.play().catch(function () {}); // plays silently until the disc lands
   }
 
   // Bring the song in once the record is on the platter.
@@ -1753,6 +1754,7 @@ body {
       try { s5Audio.currentTime = 0; } catch (e) {} // start from the top
       if (s5Audio.paused) s5Audio.play().catch(function () {});
     }
+    if (s5Audio) s5Audio.muted = false; // unmute now that the disc is in
     let vol = s5Audio ? s5Audio.volume : 0;
     const fadeIn = setInterval(function () {
       vol += 0.03;
