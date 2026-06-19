@@ -1563,6 +1563,7 @@ body {
     if (chest.classList.contains('open') || !chest.classList.contains('show')) return;
     chest.classList.add('open');
     document.getElementById('chest-hint').classList.remove('show');
+    primeAudio(); // unlock audio now, inside this tap gesture (iOS-safe)
     // the record rises out, then "You got mail", hold ~3.5s, then on to the player
     setTimeout(() => { document.getElementById('mail-note').classList.add('show'); }, 1900);
     setTimeout(() => goToStage(4), 5400);
@@ -1644,6 +1645,7 @@ body {
     let dragging = false, sx = 0, sy = 0, moved = false;
     disc.addEventListener('pointerdown', function(e) {
       if (s5Phase !== 0 || s5Loading) return;
+      primeAudio(); // unlock audio on the touch/press that starts the drag
       dragging = true; moved = false;
       try { disc.setPointerCapture(e.pointerId); } catch (err) {}
       disc.classList.add('grabbing');
@@ -1726,25 +1728,37 @@ body {
     document.getElementById('audio-stop').addEventListener('click', function(e) { e.stopPropagation(); s5StopAudio(); });
   }
 
-  // Start the song. MUST be called inside a user gesture (the drop/tap), or
-  // the browser blocks autoplay.
-  function startSong() {
+  // Unlock + buffer the song on an early, simple gesture (chest tap / drag start).
+  // Mobile Safari only unlocks audio on touchstart/click — NOT on a drag's pointerup —
+  // so we start it muted here and just fade it in when the disc lands.
+  function primeAudio() {
     if (s5Audio) return;
-    showAudioBar();
     s5Audio = new Audio('song.mp3');
-    s5Audio.volume = 0;
     s5Audio.loop = true;
-    s5Audio.play().then(() => {
-      grooveStarted = true; // keep the synth fallback from layering on top
-      let vol = 0;
-      const fadeIn = setInterval(() => {
-        vol += 0.03;
-        if (vol >= 0.7) { vol = 0.7; clearInterval(fadeIn); }
-        s5Audio.volume = vol;
-      }, 100);
-    }).catch(() => {
-      startBassline(); // no file / blocked — synth fallback
-    });
+    s5Audio.volume = 0;
+    s5Audio.play().catch(function () {}); // plays silently until startSong fades it in
+  }
+
+  // Bring the song in once the record is on the platter.
+  function startSong() {
+    showAudioBar();
+    grooveStarted = true; // keep the synth fallback from layering on top
+    if (!s5Audio) {
+      // never got primed — last-ditch attempt within this gesture
+      s5Audio = new Audio('song.mp3');
+      s5Audio.loop = true;
+      s5Audio.volume = 0;
+      s5Audio.play().catch(function () { startBassline(); });
+    } else {
+      try { s5Audio.currentTime = 0; } catch (e) {} // start from the top
+      if (s5Audio.paused) s5Audio.play().catch(function () {});
+    }
+    let vol = s5Audio ? s5Audio.volume : 0;
+    const fadeIn = setInterval(function () {
+      vol += 0.03;
+      if (vol >= 0.7) { vol = 0.7; clearInterval(fadeIn); }
+      if (s5Audio) s5Audio.volume = vol;
+    }, 100);
   }
 
   function s5PlayRecord() {
