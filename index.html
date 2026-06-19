@@ -220,6 +220,15 @@ body {
   60% { opacity: 1; transform: translateX(-50%) scale(1.1) translateY(-5px); }
   100% { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
 }
+#stage-2 .flower-thought {
+  position: absolute; transform: translateX(-50%) translateY(8px);
+  font-family: 'Equinox', serif; font-style: italic; color: var(--p-cream);
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem); white-space: nowrap;
+  opacity: 0; filter: blur(8px); pointer-events: none; z-index: 8;
+  text-shadow: 0 0 16px rgba(110,47,78,0.85), 0 0 6px rgba(42,22,34,0.7);
+  transition: opacity 1s ease, filter 1s ease, transform 1s ease;
+}
+#stage-2 .flower-thought.show { opacity: 1; filter: blur(0); transform: translateX(-50%) translateY(0); }
 
 /* ============ STAGE 3: AUTUMN (catch leaves) ============ */
 #stage-3 {
@@ -565,11 +574,9 @@ body {
 }
 #stage-5 .scramble-text.show { opacity: 1; }
 #stage-5 .desktop-content {
-  display: none; padding: 1.5rem 2rem; max-width: 42ch; margin: 0 auto;
-  max-height: 52vh; overflow-y: auto; scrollbar-width: none;
+  display: none; padding: 1.4rem 1.8rem; max-width: 42ch; margin: 0 auto;
   position: relative; z-index: 6;
 }
-#stage-5 .desktop-content::-webkit-scrollbar { display: none; }
 #stage-5 .desktop-content.show { display: block; }
 #stage-5 .crt-base {
   position: relative;
@@ -1121,14 +1128,20 @@ body {
 
   // ============ STAGE 2: GARDEN — tap and hold to grow 5 flowers ============
   let s2Planted = 0;
-  const s2Total = 5;
+  const s2Total = 3;
   let s2Done = false;
   let s2ActiveFlower = null;
   let s2GrowthStart = 0;
   let s2GrowthRAF = null;
   const s2GrowthDuration = 1800; // ms to grow fully — natural pace
+  // 3 distinct roses: varying palette, height and a little thought each
+  const FLOWERS = [
+    { outer: '#9b2d4e', mid: '#b5546e', inner: '#c4607a', tip: '#e08a9d', scale: 1.0,  thought: 'bloom slowly.' },
+    { outer: '#7a2f4a', mid: '#a9466b', inner: '#cf7ea0', tip: '#f0b8cf', scale: 1.22, thought: 'reach higher.' },
+    { outer: '#b8617e', mid: '#d98aa8', inner: '#eab0c6', tip: '#fad6e2', scale: 0.84, thought: 'stay soft.' }
+  ];
 
-  function buildRoseSVG() {
+  function buildRoseSVG(p) {
     return '<svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">' +
       // Stem (revealed first, grows from bottom)
       '<path class="f-stem" d="M50 200 Q48 170 50 140 Q52 110 50 80" stroke="#8a9a6a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="120" stroke-dashoffset="120"/>' +
@@ -1145,13 +1158,13 @@ body {
       // Bloom (revealed last — petals open)
       '<g class="f-bloom" opacity="0">' +
         // Outer petals
-        '<ellipse cx="38" cy="72" rx="14" ry="12" fill="#9b2d4e" opacity="0.7" transform="rotate(-25 38 72)"/>' +
-        '<ellipse cx="62" cy="74" rx="14" ry="12" fill="#9b2d4e" opacity="0.7" transform="rotate(25 62 74)"/>' +
-        '<ellipse cx="50" cy="65" rx="13" ry="11" fill="#b5546e" opacity="0.8"/>' +
+        '<ellipse cx="38" cy="72" rx="14" ry="12" fill="' + p.outer + '" opacity="0.72" transform="rotate(-25 38 72)"/>' +
+        '<ellipse cx="62" cy="74" rx="14" ry="12" fill="' + p.outer + '" opacity="0.72" transform="rotate(25 62 74)"/>' +
+        '<ellipse cx="50" cy="65" rx="13" ry="11" fill="' + p.mid + '" opacity="0.82"/>' +
         // Inner petals
-        '<ellipse cx="44" cy="72" rx="9" ry="8" fill="#c4607a" opacity="0.85"/>' +
-        '<ellipse cx="56" cy="73" rx="9" ry="8" fill="#c4607a" opacity="0.85"/>' +
-        '<ellipse cx="50" cy="68" rx="8" ry="7" fill="#e08a9d" opacity="0.9"/>' +
+        '<ellipse cx="44" cy="72" rx="9" ry="8" fill="' + p.inner + '" opacity="0.88"/>' +
+        '<ellipse cx="56" cy="73" rx="9" ry="8" fill="' + p.inner + '" opacity="0.88"/>' +
+        '<ellipse cx="50" cy="68" rx="8" ry="7" fill="' + p.tip + '" opacity="0.92"/>' +
         // Center
         '<circle cx="50" cy="72" r="4" fill="#4a3a52"/>' +
         '<circle cx="50" cy="72" r="2" fill="#e8c285"/>' +
@@ -1159,13 +1172,28 @@ body {
       '</svg>';
   }
 
+  function showFlowerThought(flower, text) {
+    const t = document.createElement('div');
+    t.className = 'flower-thought';
+    t.textContent = text;
+    t.style.left = flower.style.left;
+    t.style.bottom = (flower.offsetHeight + 16) + 'px';
+    document.getElementById('stage-2').appendChild(t);
+    requestAnimationFrame(() => t.classList.add('show'));
+    setTimeout(() => { t.classList.remove('show'); setTimeout(() => { if (t.parentNode) t.remove(); }, 900); }, 2600);
+  }
+
   function s2StartGrowing(x) {
     if (s2Done || s2ActiveFlower) return;
 
+    const variant = FLOWERS[s2Planted % FLOWERS.length];
     const flower = document.createElement('div');
     flower.className = 'planted-flower';
     flower.style.left = x + 'px';
-    flower.innerHTML = buildRoseSVG();
+    flower.style.width = (100 * variant.scale) + 'px';
+    flower.style.height = (200 * variant.scale) + 'px';
+    flower._variant = variant;
+    flower.innerHTML = buildRoseSVG(variant);
     document.getElementById('stage-2').appendChild(flower);
 
     s2ActiveFlower = flower;
@@ -1236,11 +1264,13 @@ body {
     // If the flower reached at least 85% growth, count it as a fully grown flower
     const elapsed = performance.now() - s2GrowthStart;
     if (elapsed >= s2GrowthDuration * 0.85) {
+      // the rose has bloomed — let its thought rise
+      if (s2ActiveFlower._variant) showFlowerThought(s2ActiveFlower, s2ActiveFlower._variant.thought);
       s2Planted++;
       if (s2Planted >= s2Total && !s2Done) {
         s2Done = true;
-        setTimeout(() => fadePrompt('prompt-s2'), 800);
-        setTimeout(() => goToStage(2), 2500);
+        setTimeout(() => fadePrompt('prompt-s2'), 1400);
+        setTimeout(() => goToStage(2), 3400);
       }
     } else {
       // Not fully grown — fade it out and remove
@@ -1452,6 +1482,26 @@ body {
     "Congratulations on your graduation. May your future be as bright as the hope you carry today, as limitless as the sky above you, and as extraordinary as the story you are only just beginning to write. The world is lucky to have you stepping into it. Go gently, go boldly, and go knowing that you are deeply, deeply loved."
   ];
 
+  // Break the letter into small pages that fit the screen without growing/scrolling it.
+  function buildPages(paras) {
+    const out = [];
+    const budget = 300; // ~chars per screen
+    paras.forEach(para => {
+      const sentences = para.match(/[^.!?]+[.!?]+["”’)]*\s*/g) || [para];
+      let cur = '';
+      sentences.forEach(raw => {
+        const s = raw.trim();
+        if (!s) return;
+        if (!cur) cur = s;
+        else if ((cur + ' ' + s).length <= budget) cur += ' ' + s;
+        else { out.push(cur); cur = s; }
+      });
+      if (cur) out.push(cur);
+    });
+    return out;
+  }
+  const pages = buildPages(paragraphs);
+
   let s5Index = 0;
   let s5CharIndex = 0;
   let s5Typing = false;
@@ -1605,7 +1655,7 @@ body {
   }
 
   function startTypingParagraph(idx) {
-    if (idx >= paragraphs.length) {
+    if (idx >= pages.length) {
       showSignature();
       return;
     }
@@ -1622,13 +1672,13 @@ body {
   }
 
   function typeNextChar() {
-    if (!s5Typing || s5Index >= paragraphs.length) return;
+    if (!s5Typing || s5Index >= pages.length) return;
     const p = document.getElementById('msg-p');
-    const text = paragraphs[s5Index];
+    const text = pages[s5Index];
     if (s5CharIndex >= text.length) {
       s5Typing = false;
       p.innerHTML = text;
-      if (s5Index < paragraphs.length - 1) {
+      if (s5Index < pages.length - 1) {
         document.getElementById('continue-hint').classList.add('show');
       } else {
         showSignature();
@@ -1640,8 +1690,6 @@ body {
     }
     const displayed = text.substring(0, s5CharIndex + 1);
     p.innerHTML = displayed + '<span class="cursor"></span>';
-    const dc = document.getElementById('desktop-content');
-    if (dc) dc.scrollTop = dc.scrollHeight; // keep the cursor in view as it types
     s5CharIndex++;
     s5TypeInterval = setTimeout(typeNextChar, 22);
   }
@@ -1661,8 +1709,8 @@ body {
       clearTimeout(s5TypeInterval);
       s5Typing = false;
       const p = document.getElementById('msg-p');
-      p.innerHTML = paragraphs[s5Index];
-      if (s5Index < paragraphs.length - 1) {
+      p.innerHTML = pages[s5Index];
+      if (s5Index < pages.length - 1) {
         document.getElementById('continue-hint').classList.add('show');
       } else {
         showSignature();
@@ -1670,7 +1718,7 @@ body {
       return;
     }
     // If waiting for continue, fade the current paragraph out and type the next in its place
-    if (s5Index < paragraphs.length - 1) {
+    if (s5Index < pages.length - 1) {
       document.getElementById('continue-hint').classList.remove('show');
       const p = document.getElementById('msg-p');
       p.style.transition = 'opacity 0.45s ease';
