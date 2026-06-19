@@ -410,7 +410,9 @@ body {
 
 /* ============ STAGE 5: REVEAL (record player → desktop → typewriter) ============ */
 #stage-5 {
-  background: linear-gradient(180deg, #0a0f1c 0%, #131c2e 50%, #1a1f2e 100%);
+  background:
+    radial-gradient(120% 80% at 50% 12%, #f3e1f2 0%, transparent 55%),
+    linear-gradient(180deg, #e9ddf4 0%, #ecdcef 50%, #f0dced 100%);
 }
 
 /* --- Record Player --- */
@@ -473,79 +475,147 @@ body {
 /* --- CRT Desktop --- */
 #stage-5 .desktop-wrap {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 14px;
   z-index: 12; opacity: 0; pointer-events: none; transition: opacity 1.5s ease;
 }
+/* pink pixel keyboard under the monitor */
+#stage-5 .kawaii-keyboard {
+  position: relative; width: min(440px, 82vw); height: 64px; border-radius: 12px;
+  border: 4px solid #f7cfe0;
+  background-color: #f1a8c8;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.55) 0 2px, transparent 2px 30px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.4) 0 2px, transparent 2px 20px),
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35) 0 30%, transparent 60%);
+  box-shadow: inset 0 2px 5px rgba(255,255,255,0.45), 0 10px 22px rgba(180,110,160,0.3);
+}
+#stage-5 .kawaii-keyboard::before {
+  content: ''; position: absolute; left: 50%; bottom: 7px; transform: translateX(-50%);
+  width: 46%; height: 12px; border-radius: 3px;
+  background: #f9c2da; box-shadow: inset 0 1px 2px rgba(255,255,255,0.5);
+}
+@media (max-height: 620px) { #stage-5 .kawaii-keyboard { display: none; } }
 #stage-5 .desktop-wrap.show { opacity: 1; pointer-events: auto; }
 #stage-5 .crt-monitor {
-  width: min(620px, 92vw); position: relative;
-  filter: drop-shadow(0 8px 40px rgba(0, 0, 0, 0.5));
+  width: min(560px, 92vw); position: relative;
+  filter: drop-shadow(0 12px 34px rgba(180, 110, 160, 0.4));
+  image-rendering: pixelated;
 }
+/* little blue saturn perched on top */
+#stage-5 .crt-planet {
+  position: absolute; top: -30px; left: 44px; width: 46px; height: 40px; z-index: 4;
+  animation: planetBob 4s ease-in-out infinite;
+}
+@keyframes planetBob { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-5px); } }
 #stage-5 .crt-bezel {
-  background: linear-gradient(180deg, #2a2a35 0%, #1e1e28 100%);
-  border-radius: 16px 16px 8px 8px; padding: 28px 28px 20px;
-  border: 2px solid #3a3a48;
+  position: relative;
+  background:
+    radial-gradient(circle at 22% 28%, #ffdcec 0 12%, transparent 42%),
+    radial-gradient(circle at 72% 58%, #ffc6dd 0 14%, transparent 46%),
+    radial-gradient(circle at 46% 82%, #ffe3f0 0 10%, transparent 40%),
+    linear-gradient(180deg, #f9bcd6 0%, #f2a8c8 100%);
+  border-radius: 18px 18px 10px 10px; padding: 26px 26px 20px;
+  border: 4px solid #f7cfe0;
+  box-shadow: inset 0 0 0 2px #ec96b8, inset 0 2px 6px rgba(255,255,255,0.5);
+}
+/* sparkles scattered on the bezel */
+#stage-5 .crt-bezel::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background-image:
+    radial-gradient(circle, #fff 0 1.4px, transparent 2px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.6px),
+    radial-gradient(circle, #fff 0 1.2px, transparent 1.8px),
+    radial-gradient(circle, #fff 0 1px, transparent 1.5px);
+  background-repeat: no-repeat;
+  background-position: 14% 24%, 88% 18%, 80% 78%, 22% 86%;
+  opacity: 0.85;
 }
 #stage-5 .crt-screen {
-  position: relative; background: #0a0f1c; border-radius: 8px;
+  position: relative; border-radius: 8px;
+  background:
+    radial-gradient(110% 90% at 50% 0%, #efe3f6 0%, transparent 60%),
+    linear-gradient(180deg, #e7daf3 0%, #efdcec 60%, #f6dde9 100%);
   overflow: hidden; min-height: 320px; max-height: 60vh;
-  border: 1px solid #2a2a35;
+  border: 3px solid #d9a9c8;
+  box-shadow: inset 0 0 18px rgba(214,160,200,0.4);
+}
+/* faint twinkle stars + hearts behind the message */
+#stage-5 .crt-screen::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.9) 0 1.4px, transparent 2px),
+    radial-gradient(circle, rgba(255,255,255,0.8) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(255,176,206,0.7) 0 1.6px, transparent 2.2px),
+    radial-gradient(circle, rgba(255,255,255,0.8) 0 1.1px, transparent 1.7px);
+  background-repeat: no-repeat;
+  background-position: 10% 16%, 86% 12%, 78% 84%, 18% 88%;
 }
 #stage-5 .scanlines {
   position: absolute; inset: 0; pointer-events: none; z-index: 10;
-  background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 3px);
+  background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.10) 2px, rgba(255,255,255,0.10) 3px);
 }
 #stage-5 .crt-screen::before {
   content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 11;
-  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.4) 100%);
+  background: radial-gradient(ellipse at center, transparent 64%, rgba(180,120,160,0.18) 100%);
 }
 #stage-5 .scramble-text {
-  font-family: 'Courier New', monospace; font-size: 0.85rem; color: var(--c-gold);
-  white-space: pre-wrap; word-break: break-all; padding: 1.2rem;
+  font-family: 'Courier New', monospace; font-size: 0.85rem; color: #c87aa6;
+  white-space: pre-wrap; word-break: break-all; padding: 1.2rem; position: relative; z-index: 1;
   opacity: 0; transition: opacity 0.3s ease;
 }
 #stage-5 .scramble-text.show { opacity: 1; }
 #stage-5 .desktop-content {
   display: none; padding: 1.5rem 2rem; max-width: 42ch; margin: 0 auto;
   max-height: 52vh; overflow-y: auto; scrollbar-width: none;
+  position: relative; z-index: 6;
 }
 #stage-5 .desktop-content::-webkit-scrollbar { display: none; }
 #stage-5 .desktop-content.show { display: block; }
 #stage-5 .crt-base {
-  background: linear-gradient(180deg, #1e1e28 0%, #2a2a35 100%);
-  border-radius: 0 0 12px 12px; padding: 8px 20px 16px;
-  display: flex; justify-content: center; align-items: center; gap: 8px;
-  border: 2px solid #3a3a48; border-top: none;
+  position: relative;
+  background:
+    radial-gradient(circle at 28% 42%, #ffdcec 0 10%, transparent 40%),
+    linear-gradient(180deg, #f6b4d0 0%, #ef9fc2 100%);
+  border-radius: 0 0 14px 14px; padding: 12px 22px 16px;
+  display: flex; justify-content: center; align-items: center; gap: 12px;
+  border: 4px solid #f7cfe0; border-top: 2px solid #ec96b8;
+}
+/* floppy slot on the base */
+#stage-5 .crt-base::before {
+  content: ''; width: 48px; height: 9px; border-radius: 2px;
+  background: #e9def2; box-shadow: inset 0 1px 2px rgba(150,110,150,0.5);
 }
 #stage-5 .crt-power {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--c-gold); box-shadow: 0 0 8px rgba(232, 194, 133, 0.6);
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #8fd3e8; box-shadow: 0 0 8px rgba(143,211,232,0.85);
 }
 #stage-5 .message-p {
   font-family: 'EB Garamond', Georgia, serif; font-weight: 400;
   font-size: clamp(1.05rem, 1.9vw, 1.2rem); line-height: 1.85;
   letter-spacing: 0.01em;
-  color: var(--warm-white); margin-bottom: 1.4rem; min-height: 1.85em;
-  text-shadow: 0 0 20px rgba(5, 8, 16, 0.6);
+  color: #6e2f4e; margin-bottom: 1.4rem; min-height: 1.85em;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.55);
 }
 #stage-5 .cursor {
-  display: inline-block; width: 1.5px; height: 1em;
-  background: var(--c-gold); margin-left: 2px;
+  display: inline-block; width: 2px; height: 1em;
+  background: #a9466b; margin-left: 2px;
   animation: blink 0.8s steps(2) infinite; vertical-align: text-bottom;
 }
 #stage-5 .continue-hint {
   position: relative; margin-top: 1.5rem; font-family: 'Equinox', serif; font-style: italic;
-  font-size: 0.85rem; color: var(--c-gold); opacity: 0;
+  font-size: 0.85rem; color: #a9466b; opacity: 0;
   transition: opacity 0.6s ease; text-align: center; cursor: pointer;
-  text-shadow: 0 0 16px rgba(232, 194, 133, 0.5);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 }
 #stage-5 .continue-hint.show { opacity: 0.85; }
 #stage-5 .continue-hint.show:hover { opacity: 1; }
 #stage-5 .signature {
+  position: relative; z-index: 6;
   font-family: 'PARISIAN', 'Equinox', serif; font-style: italic;
-  font-size: clamp(1.2rem, 2.5vw, 1.5rem); color: var(--c-gold);
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem); color: #a9466b;
   margin-top: 2rem; text-align: center; opacity: 0; filter: blur(8px);
   transition: filter 1.2s ease, opacity 1.2s ease 0.3s;
-  text-shadow: 0 0 24px rgba(232, 194, 133, 0.5);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
 }
 #stage-5 .signature.show { opacity: 1; filter: blur(0); }
 #stage-5 .hearts-canvas {
@@ -556,18 +626,18 @@ body {
 #stage-5 .audio-bar {
   position: absolute; top: 18px; right: 18px; z-index: 30;
   display: flex; gap: 8px; padding: 7px 10px; border-radius: 999px;
-  background: rgba(20,26,40,0.55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  border: 1px solid rgba(232,194,133,0.32);
+  background: rgba(255,240,247,0.72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border: 2px solid #f3b6d2;
   opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
 }
 #stage-5 .audio-bar.show { opacity: 1; pointer-events: auto; }
 #stage-5 .audio-btn {
   width: 30px; height: 30px; border-radius: 50%; cursor: pointer; padding: 0;
-  background: rgba(232,194,133,0.12); border: 1px solid rgba(232,194,133,0.4);
-  color: var(--c-gold); display: flex; align-items: center; justify-content: center;
+  background: #ffe3ef; border: 2px solid #ec96b8;
+  color: #b5547a; display: flex; align-items: center; justify-content: center;
   transition: background 0.3s ease, transform 0.15s ease;
 }
-#stage-5 .audio-btn:hover { background: rgba(232,194,133,0.28); }
+#stage-5 .audio-btn:hover { background: #ffd0e4; }
 #stage-5 .audio-btn:active { transform: scale(0.92); }
 @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 
@@ -763,6 +833,13 @@ body {
   <!-- Phase 3: CRT Desktop -->
   <div class="desktop-wrap" id="desktop-wrap">
     <div class="crt-monitor">
+      <div class="crt-planet" aria-hidden="true">
+        <svg viewBox="0 0 46 40" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="23" cy="22" rx="21" ry="6.5" fill="none" stroke="#8fd3e8" stroke-width="3" transform="rotate(-18 23 22)"/>
+          <circle cx="23" cy="19" r="11" fill="#a9e0f0" stroke="#7fc4dc" stroke-width="2"/>
+          <circle cx="19" cy="16" r="3" fill="#e2f6fc"/>
+        </svg>
+      </div>
       <div class="crt-bezel">
         <div class="crt-screen" id="crt-screen">
           <div class="scanlines"></div>
@@ -778,6 +855,7 @@ body {
         <div class="crt-power"></div>
       </div>
     </div>
+    <div class="kawaii-keyboard" aria-hidden="true"></div>
   </div>
 </div>
 
